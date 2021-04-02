@@ -1,0 +1,26 @@
+* Lectures:
+https://www.davidsilver.uk/teaching/
+https://www.guru99.com/reinforcement-learning-tutorial.html#2
+
+* Codes:
+https://github.com/dennybritz/reinforcement-learning
+
+* Books:
+http://incompleteideas.net/book/RLbook2018.pdf
+https://sites.ualberta.ca/~szepesva/papers/RLAlgsInMDPs.pdf
+
+* Markov Chains:
+https://setosa.io/ev/markov-chains/
+https://towardsdatascience.com/brief-introduction-to-markov-chains-2c8cab9c98ab
+
+* TIC-TAC-TOE Self-Play Tabular Q-Leaning Example:
+https://towardsdatascience.com/an-introductory-reinforcement-learning-project-learning-tic-tac-toe-via-self-play-tabular-b8b845e18fe
+
+* Law of large numbers:
+https://en.wikipedia.org/wiki/Law_of_large_numbers
+
+* Central Limit Theorem:
+https://www.youtube.com/watch?v=b5xQmk9veZ4
+
+* Evolutionary Algorithm:
+https://keiwando.com/evolution/faq/evolutionary-algorithm/
