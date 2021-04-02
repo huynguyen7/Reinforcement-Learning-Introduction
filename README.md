@@ -4,4 +4,4 @@ This repository contains examples for Reinforcement Learning Algorithms:
 
 
 ## Resources
-- Reinforcement Learning: An Introduction 2nd edition: [Click Here](https://web.stanford.edu/class/psych209/Readings/SuttonBartoIPRLBook2ndEd.pdf)
+- Reinforcement Learning: An Introduction 2nd Edition: [Click Here](https://web.stanford.edu/class/psych209/Readings/SuttonBartoIPRLBook2ndEd.pdf)
