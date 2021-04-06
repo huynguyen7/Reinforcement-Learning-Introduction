@@ -94,25 +94,24 @@ class Simulator:  # JUST FOR SIMULATING PURPOSES.
 
             if log:
                 mean_rewards = np.array([rewards_history[i].sum()/agent.get_N()[i] for i in range(self.k) if agent.get_N()[i] != 0])
-                print(f"----RUN-{run}--EPSILON-{self.epsilon}----\n*AVERAGE_REWARD = {mean_rewards}\n*Q_ESTIMATE: {agent.get_Q()}\n")
+                print(f"----RUN-{run+1}--EPSILON-{self.epsilon}----\n*AVERAGE_REWARD = {mean_rewards}\n*Q_ESTIMATE: {agent.get_Q()}\n*Q_TRUTH: {[bandit.get_q() for bandit in bandits]}\n")
 
     def converge(self, mean_rewards, Q):
-        return True if not np.any(mean_rewards - Q) else return False
+        return True if not np.any(mean_rewards - Q) else False
 
 
 """ PARAMS """
-epsilons = [0, 0.01, 0.1]
+epsilons = [0.05]
 
-if __name__== "__main__":
-    for epsilon in epsilons:
-        simulator = Simulator(
-                k=10,  # Number of actions/bandit tasks.
-                std=1,  # Used with Gauss dist
-                mean=0,  # Used with Gauss dist
-                epsilon=epsilon,
-                num_runs=2000,
-                num_steps=1000)
+for epsilon in epsilons:
+    simulator = Simulator(
+            k=10,  # Number of actions/bandit tasks.
+            std=1,  # Used with Gauss dist
+            mean=0,  # Used with Gauss dist
+            epsilon=epsilon,
+            num_runs=3,
+            num_steps=10000)
 
-        simulator.simulate(
-                log=True,
-                check_convergence=False)  # Setting this to True will heavily slow down the program because it requires lots of numpy operations.
+    simulator.simulate(
+            log=True,
+            check_convergence=False)  # Setting this to True will heavily slow down the program because it requires lots of numpy operations.
