@@ -1,6 +1,7 @@
 * Lectures:
 https://www.davidsilver.uk/teaching/
 https://www.guru99.com/reinforcement-learning-tutorial.html#2
+http://hal.cse.msu.edu/teaching/2020-fall-artificial-intelligence/
 
 * Codes:
 https://github.com/dennybritz/reinforcement-learning
@@ -24,3 +25,6 @@ https://www.youtube.com/watch?v=b5xQmk9veZ4
 
 * Evolutionary Algorithm:
 https://keiwando.com/evolution/faq/evolutionary-algorithm/
+
+* Epsilon-Greedy Q-Learning Algorithm:
+https://www.baeldung.com/cs/epsilon-greedy-q-learning
