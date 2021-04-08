@@ -6,7 +6,6 @@
     *Name: HUY NGUYEN
     *Source:
         + Reinforcement Learning: An Introduction Second edition  --> Chapter 2
-        + https://www.cs.utexas.edu/~pstone/Courses/394Rfall16/resources/8.5.pdf
     
     *THIS IMPLEMENTATION USES `Upper Confidence Bound` AND `Average Reward` APPROACH WITH FIXED LEARNING_RATE.
 
@@ -17,10 +16,6 @@ import numpy as np
 #import matplotlib.pyplot as plt
 
 warnings.filterwarnings("ignore", category=RuntimeWarning) 
-
-
-def randargmax(b, **kw):
-    return np.argmax(np.random.random(b.shape)*(b==b.max()), **kw)
 
 
 class Bandit:  # Action class
@@ -36,7 +31,7 @@ class Bandit:  # Action class
         return self.q
 
     def update_q(self, alpha):  # Nonstationary q
-        self.q = self.q + (2*np.random.randint(0,2))*alpha
+        self.q = self.q + (2*np.random.randint(0,2)-1)*alpha
 
 
 class Agent():  # Agent class
@@ -44,11 +39,11 @@ class Agent():  # Agent class
         self.k = k
         self.alpha = alpha  # Learning rate
         self.c = c  # Degree of exploration
-        self.Q = np.zeros(k, dtype=np.float32)  # Estimate/Assumed Q
-        self.N = np.zeros(k, dtype=np.float32)*1e-309  # Number of interaction with respect to Q
+        self.Q = np.zeros(k, dtype=np.float64)  # Estimate/Assumed Q
+        self.N = np.zeros(k, dtype=np.float64)*1e-309  # Number of interaction with respect to Q
 
     def pi(self, t):  # Policy function -> Return action index
-        return randargmax(self.Q + self.c*np.sqrt(np.log(t)/self.N))
+        return np.argmax(self.Q + self.c*np.sqrt(np.log(t)/self.N))
     
     def learn(self, action, reward):  # Update Estimate/Assumed Q and its number of interactions
         self.N[action] += 1
@@ -81,7 +76,8 @@ class Simulator:  # JUST FOR SIMULATING PURPOSES.
     def simulate(self, log=True, check_convergence=False):
         for run in range(self.num_runs):
             if log:
-                rewards_history = np.zeros((self.k,self.num_steps), dtype=np.float32)
+                #rewards_history = np.zeros((self.k,self.num_steps), dtype=np.float64)
+                pass
             agent = Agent(self.k, self.alpha, self.c)
             bandits = []
 
@@ -94,19 +90,19 @@ class Simulator:  # JUST FOR SIMULATING PURPOSES.
             # UCB Agent Learning Process
             for step in range(self.num_steps):
                 action = agent.pi(step+1)  # Agent acts
-                bandits[action].update_q(self.alpha)  # Update q / Nonstationary environment
+                [bandits[i].update_q(self.alpha) for i in range(self.k)] # Update q / Nonstationary environment
                 reward = bandits[action].reward()  # Environment sends back reward
                 agent.learn(action, reward)  # Agent learns
                 
                 if log:
-                    rewards_history[action, step] = reward
+                    #rewards_history[action, step] = reward
                     if check_convergence and self.converge([bandit.get_q() for bandit in bandits], agent.get_Q()):
                         print(f'The Learning Process converged with {step+1} steps.')
                         break
 
             if log:
-                mean_rewards = np.array([rewards_history[i].sum()/agent.get_N()[i] for i in range(self.k) if agent.get_N()[i] != 0])
-                print(f"----RUN-{run+1}--CONFIDENCE_VALUE-{self.c}----\n*Q_ESTIMATE: {mean_rewards}\n*Q_TRUTH: {[bandit.get_q() for bandit in bandits]}\n")
+                #mean_rewards = np.array([rewards_history[i].sum()/agent.get_N()[i] for i in range(self.k) if agent.get_N()[i] != 0])
+                print(f"----RUN-{run+1}--CONFIDENCE_VALUE-{self.c}----\n*Q_ESTIMATE: {agent.get_Q()}\n\n*Q_TRUTH: {[bandit.get_q() for bandit in bandits]}\n\nN: {agent.get_N()}\n")
 
     def converge(self, q, Q):
         return True if not np.any(q-Q) else False
@@ -121,9 +117,9 @@ for c in confidence_values:
             std=1,  # Used with Gauss dist
             mean=0,  # Used with Gauss dist
             alpha=0.1,  # Learning rate
-            c=0.5,  # Degree of exploration / Confidence value
+            c=4,  # Degree of exploration / Confidence value
             num_runs=1,
-            num_steps=100000)
+            num_steps=100)
 
     simulator.simulate(
             log=True,

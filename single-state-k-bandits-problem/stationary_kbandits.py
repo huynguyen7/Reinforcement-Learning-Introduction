@@ -37,7 +37,7 @@ class Agent():  # Agent class
     def pi(self):  # Policy function -> Return action index
         greed = np.random.rand()  # Uniform dist
         return np.random.choice(range(self.k)) if greed <= self.epsilon else np.argmax(self.Q)
-    
+
     def learn(self, action, reward):  # Update Estimate/Assumed Q and its number of interactions
         self.N[action] += 1
         self.Q[action] += (1/self.N[action]) * (reward-self.Q[action])
