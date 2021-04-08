@@ -7,8 +7,7 @@
         + Reinforcement Learning: An Introduction Second edition  --> Chapter 2
         + https://www.cs.utexas.edu/~pstone/Courses/394Rfall16/resources/8.5.pdf
 
-    *THIS IMPLEMENTATION USES `Epsilon Greedy Method` APPROACH.
-    *Just a little modification to the implementation `stationary_kbandits.py`.. since Q are not initialized to 0 all the time. This approach shows that initial assumed Q values increases a fair amount of explorations than setting Q to zeros..
+    *THIS IMPLEMENTATION USES `Epsilon Greedy Method` AND `Average Reward` APPROACH.
 """
 
 import numpy as np
@@ -29,11 +28,11 @@ class Bandit:  # Action class
 
 
 class Agent():  # Agent class
-    def __init__(self, k, epsilon, Q_init):
+    def __init__(self, k, epsilon):
         self.epsilon = epsilon
         self.k = k
-        self.Q = np.ones(k, dtype=np.float32)*Q_init  # Estimate/Assumed Q
-        self.N = np.zeros(k, dtype=np.float32)  # Number of interaction with respect to Q
+        self.Q = np.zeros(k, dtype=np.float32)  # Estimate/Assumed Q
+        self.N = np.zeros(k, dtype=np.int32)  # Number of interaction with respect to Q
         
     def pi(self):  # Policy function -> Return action index
         greed = np.random.rand()  # Uniform dist
@@ -58,12 +57,11 @@ class Simulator:  # JUST FOR SIMULATING PURPOSES.
         Methods: choose action, reset list
     """
 
-    def __init__(self, k=10, std=1, mean=0, epsilon=0, Q_init=5.0, num_runs=2000, num_steps=1000):
+    def __init__(self, k=10, std=1, mean=0, epsilon=0, num_runs=2000, num_steps=1000):
         self.k = k
         self.std = std
         self.mean = mean
         self.epsilon = epsilon
-        self.Q_init = Q_init
         self.num_runs = num_runs
         self.num_steps = num_steps
 
@@ -71,7 +69,7 @@ class Simulator:  # JUST FOR SIMULATING PURPOSES.
         for run in range(self.num_runs):
             if log:
                 rewards_history = np.zeros((self.k,self.num_steps), dtype=np.float32)
-            agent = Agent(self.k, self.epsilon, self.Q_init)
+            agent = Agent(self.k, self.epsilon)
             bandits = []
 
             # Init Environment
@@ -89,8 +87,7 @@ class Simulator:  # JUST FOR SIMULATING PURPOSES.
                 if log:
                     rewards_history[action, step] = reward
                     if check_convergence:
-                        mean_rewards = np.array([rewards_history[i].sum()/agent.get_N()[i] for i in range(self.k) if agent.get_N()[i] != 0])
-                        if mean_rewards.shape == agent.get_Q().shape and self.converge(mean_rewards, agent.get_Q()):
+                        if self.converge([bandit.get_q() for bandit in bandits], agent.get_Q()):
                             print(f'The Learning Process converged with {step+1} steps.')
                             break
 
@@ -98,8 +95,8 @@ class Simulator:  # JUST FOR SIMULATING PURPOSES.
                 mean_rewards = np.array([rewards_history[i].sum()/agent.get_N()[i] for i in range(self.k) if agent.get_N()[i] != 0])
                 print(f"----RUN-{run+1}--EPSILON-{self.epsilon}----\n*Q_ESTIMATE: {mean_rewards}\n*Q_TRUTH: {[bandit.get_q() for bandit in bandits]}\n")
 
-    def converge(self, mean_rewards, Q):
-        return True if not np.any(mean_rewards - Q) else False
+    def converge(self, q, Q):
+        return True if not np.any(q-Q) else False
 
 
 """ PARAMS """
@@ -111,9 +108,8 @@ for epsilon in epsilons:
             std=1,  # Used with Gauss dist
             mean=0,  # Used with Gauss dist
             epsilon=epsilon,
-            Q_init=5.0,
-            num_runs=2,
-            num_steps=1000)
+            num_runs=1,
+            num_steps=100000)
 
     simulator.simulate(
             log=True,

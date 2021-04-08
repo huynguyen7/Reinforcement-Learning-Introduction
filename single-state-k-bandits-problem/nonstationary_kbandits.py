@@ -1,17 +1,26 @@
-#!/Users/nguyenhuy/opt/miniconda3/envs/LinearAlgebra/bin/python3 -i             
+#!/Users/huynguyen/miniforge3/envs/math/bin/python3
 
 """
-    *SINGLE STATE MULTI-ARMED BANDITS.
+
+    *SINGLE STATE NONSTATIONARY MULTI-ARMED BANDITS.
     *Name: HUY NGUYEN
     *Source:
         + Reinforcement Learning: An Introduction Second edition  --> Chapter 2
         + https://www.cs.utexas.edu/~pstone/Courses/394Rfall16/resources/8.5.pdf
+    
+    *THIS IMPLEMENTATION USES `Upper Confidence Bound` AND `Average Reward` APPROACH WITH FIXED LEARNING_RATE.
 
-    *THIS IMPLEMENTATION USES `Epsilon Greedy Method` APPROACH.
 """
 
+import warnings
 import numpy as np
 #import matplotlib.pyplot as plt
+
+warnings.filterwarnings("ignore", category=RuntimeWarning) 
+
+
+def randargmax(b, **kw):
+    return np.argmax(np.random.random(b.shape)*(b==b.max()), **kw)
 
 
 class Bandit:  # Action class
@@ -26,21 +35,24 @@ class Bandit:  # Action class
     def get_q(self):
         return self.q
 
+    def update_q(self, alpha):  # Nonstationary q
+        self.q = self.q + (2*np.random.randint(0,2))*alpha
+
 
 class Agent():  # Agent class
-    def __init__(self, k, epsilon):
-        self.epsilon = epsilon
+    def __init__(self, k, alpha=0.1, c=0.1):
         self.k = k
-        self.Q = np.zeros(k, dtype=np.float16)  # Estimate/Assumed Q
-        self.N = np.zeros(k, dtype=np.int16)  # Number of interaction with respect to Q
-        
-    def pi(self):  # Policy function -> Return action index
-        greed = np.random.rand()  # Uniform dist
-        return np.random.choice(range(self.k)) if greed <= self.epsilon else np.argmax(self.Q)
+        self.alpha = alpha  # Learning rate
+        self.c = c  # Degree of exploration
+        self.Q = np.zeros(k, dtype=np.float32)  # Estimate/Assumed Q
+        self.N = np.zeros(k, dtype=np.float32)*1e-309  # Number of interaction with respect to Q
+
+    def pi(self, t):  # Policy function -> Return action index
+        return randargmax(self.Q + self.c*np.sqrt(np.log(t)/self.N))
     
     def learn(self, action, reward):  # Update Estimate/Assumed Q and its number of interactions
         self.N[action] += 1
-        self.Q[action] += (1/self.N[action]) * (reward-self.Q[action])
+        self.Q[action] += self.alpha*(reward-self.Q[action])
 
     def get_Q(self):
         return self.Q
@@ -57,19 +69,20 @@ class Simulator:  # JUST FOR SIMULATING PURPOSES.
         Methods: choose action, reset list
     """
 
-    def __init__(self, k=10, std=1, mean=0, epsilon=0, num_runs=2000, num_steps=1000):
+    def __init__(self, k=10, std=1, mean=0, alpha=0.1, c=0.1, num_runs=2000, num_steps=1000):
         self.k = k
         self.std = std
         self.mean = mean
-        self.epsilon = epsilon
+        self.alpha = alpha
+        self.c = c
         self.num_runs = num_runs
         self.num_steps = num_steps
 
     def simulate(self, log=True, check_convergence=False):
         for run in range(self.num_runs):
             if log:
-                rewards_history = np.zeros((self.k,self.num_steps), dtype=np.float16)
-            agent = Agent(self.k, self.epsilon)
+                rewards_history = np.zeros((self.k,self.num_steps), dtype=np.float32)
+            agent = Agent(self.k, self.alpha, self.c)
             bandits = []
 
             # Init Environment
@@ -78,39 +91,39 @@ class Simulator:  # JUST FOR SIMULATING PURPOSES.
                 bandit = Bandit(q, self.std, self.mean)
                 bandits.append(bandit)
 
-            # Greedy Epsilon Agent Learning Process
+            # UCB Agent Learning Process
             for step in range(self.num_steps):
-                action = agent.pi()  # Agent acts
+                action = agent.pi(step+1)  # Agent acts
+                bandits[action].update_q(self.alpha)  # Update q / Nonstationary environment
                 reward = bandits[action].reward()  # Environment sends back reward
                 agent.learn(action, reward)  # Agent learns
                 
                 if log:
                     rewards_history[action, step] = reward
-                    if check_convergence:
-                        mean_rewards = np.array([rewards_history[i].sum()/agent.get_N()[i] for i in range(self.k) if agent.get_N()[i] != 0])
-                        if mean_rewards.shape == agent.get_Q().shape and self.converge(mean_rewards, agent.get_Q()):
-                            print(f'The Learning Process converged with {step+1} steps.')
-                            break
+                    if check_convergence and self.converge([bandit.get_q() for bandit in bandits], agent.get_Q()):
+                        print(f'The Learning Process converged with {step+1} steps.')
+                        break
 
             if log:
                 mean_rewards = np.array([rewards_history[i].sum()/agent.get_N()[i] for i in range(self.k) if agent.get_N()[i] != 0])
-                print(f"----RUN-{run+1}--EPSILON-{self.epsilon}----\n*AVERAGE_REWARD = {mean_rewards}\n*Q_ESTIMATE: {agent.get_Q()}\n*Q_TRUTH: {[bandit.get_q() for bandit in bandits]}\n")
+                print(f"----RUN-{run+1}--CONFIDENCE_VALUE-{self.c}----\n*Q_ESTIMATE: {mean_rewards}\n*Q_TRUTH: {[bandit.get_q() for bandit in bandits]}\n")
 
-    def converge(self, mean_rewards, Q):
-        return True if not np.any(mean_rewards - Q) else False
+    def converge(self, q, Q):
+        return True if not np.any(q-Q) else False
 
 
 """ PARAMS """
-epsilons = [0.05]
+confidence_values = [0.1]
 
-for epsilon in epsilons:
+for c in confidence_values:
     simulator = Simulator(
             k=10,  # Number of actions/bandit tasks.
             std=1,  # Used with Gauss dist
             mean=0,  # Used with Gauss dist
-            epsilon=epsilon,
-            num_runs=3,
-            num_steps=10000)
+            alpha=0.1,  # Learning rate
+            c=0.5,  # Degree of exploration / Confidence value
+            num_runs=1,
+            num_steps=100000)
 
     simulator.simulate(
             log=True,
