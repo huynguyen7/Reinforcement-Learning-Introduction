@@ -118,8 +118,8 @@ for c in confidence_values:
             mean=0,  # Used with Gauss dist
             alpha=0.1,  # Learning rate
             c=4,  # Degree of exploration / Confidence value
-            num_runs=1,
-            num_steps=100)
+            num_runs=1,  # Number of episodes
+            num_steps=100)  # Lifetime
 
     simulator.simulate(
             log=True,
