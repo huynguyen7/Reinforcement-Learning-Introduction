@@ -1,6 +1,7 @@
 #!/Users/huynguyen/miniforge3/envs/math/bin/python3
 
 """
+
     *SINGLE STATE STATIONARY MULTI-ARMED BANDITS.
     *Name: HUY NGUYEN
     *Source:
@@ -8,6 +9,7 @@
         + https://www.cs.utexas.edu/~pstone/Courses/394Rfall16/resources/8.5.pdf
 
     *THIS IMPLEMENTATION USES `Epsilon Greedy Method` AND `Average Reward` APPROACH.
+
 """
 
 import numpy as np

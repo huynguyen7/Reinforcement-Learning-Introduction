@@ -1,5 +1,8 @@
 -In Reinforcement learning, the agent or decision-maker generates its training data by interacting with the world..
 
+* Brief Introduction For Single State K-bandits:
+https://towardsdatascience.com/introduction-to-reinforcement-learning-c99c8c0720ef
+
 * Lectures:
 https://www.davidsilver.uk/teaching/
 https://www.guru99.com/reinforcement-learning-tutorial.html#2
@@ -20,7 +23,7 @@ https://zsalloum.medium.com/q-vs-v-in-reinforcement-learning-the-easy-way-9350e1
 https://setosa.io/ev/markov-chains/
 https://towardsdatascience.com/brief-introduction-to-markov-chains-2c8cab9c98ab
 
-* Markov Decision Process:
+* Markov Decision Process --> Generally, used to solve multiple state RL problem:
 http://hal.cse.msu.edu/teaching/2020-fall-artificial-intelligence/13-markov-decision-processes/
 
 * TIC-TAC-TOE Self-Play Tabular Q-Leaning Example:
@@ -31,6 +34,9 @@ https://en.wikipedia.org/wiki/Law_of_large_numbers
 
 * Central Limit Theorem:
 https://www.youtube.com/watch?v=b5xQmk9veZ4
+
+* K-bandits:
+https://oneraynyday.github.io/ml/2018/05/03/Reinforcement-Learning-Bandit/#gradient-bandit-algorithms
 
 * The Upper Confidence Bound Algorithm(UCB):
 https://banditalgs.com/2016/09/18/the-upper-confidence-bound-algorithm/

@@ -1,4 +1,4 @@
-#!/Users/nguyenhuy/opt/miniconda3/envs/LinearAlgebra/bin/python3 -i
+#!/Users/huynguyen/miniforge3/envs/math/bin/python3
 
 import numpy as np
 import matplotlib.pyplot as plt

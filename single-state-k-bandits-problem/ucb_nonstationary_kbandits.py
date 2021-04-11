@@ -7,7 +7,7 @@
     *Source:
         + Reinforcement Learning: An Introduction Second edition  --> Chapter 2
     
-    *THIS IMPLEMENTATION USES `Upper Confidence Bound` AND `Average Reward` APPROACH WITH FIXED LEARNING_RATE.
+    *THIS IMPLEMENTATION USES `Upper Confidence Bound` AND `Fixed Learning Rate`.
 
 """
 
@@ -40,7 +40,7 @@ class Agent():  # Agent class
         self.alpha = alpha  # Learning rate
         self.c = c  # Degree of exploration
         self.Q = np.zeros(k, dtype=np.float64)  # Estimate/Assumed Q
-        self.N = np.zeros(k, dtype=np.float64)*1e-309  # Number of interaction with respect to Q
+        self.N = np.ones(k, dtype=np.float64)*1e-309  # Number of interaction with respect to Q
 
     def pi(self, t):  # Policy function -> Return action index
         return np.argmax(self.Q + self.c*np.sqrt(np.log(t)/self.N))
@@ -90,7 +90,7 @@ class Simulator:  # JUST FOR SIMULATING PURPOSES.
             # UCB Agent Learning Process
             for step in range(self.num_steps):
                 action = agent.pi(step+1)  # Agent acts
-                [bandits[i].update_q(self.alpha) for i in range(self.k)] # Update q / Nonstationary environment
+                #[bandits[i].update_q(self.alpha) for i in range(self.k)] # Update q / Nonstationary environment
                 reward = bandits[action].reward()  # Environment sends back reward
                 agent.learn(action, reward)  # Agent learns
                 
@@ -119,7 +119,7 @@ for c in confidence_values:
             alpha=0.1,  # Learning rate
             c=4,  # Degree of exploration / Confidence value
             num_runs=1,  # Number of episodes
-            num_steps=100)  # Lifetime
+            num_steps=1000)  # Lifetime
 
     simulator.simulate(
             log=True,

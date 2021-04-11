@@ -1,6 +1,7 @@
 #!/Users/huynguyen/miniforge3/envs/math/bin/python3
 
 """
+
     *SINGLE STATE STATIONARY MULTI-ARMED BANDITS.
     *Name: HUY NGUYEN
     *Source:
@@ -9,6 +10,7 @@
 
     *THIS IMPLEMENTATION USES `Epsilon Greedy Method` APPROACH.
     *Just a little modification to the implementation `stationary_kbandits.py`.. since Q are not initialized to 0 all the time. This approach shows that initial assumed Q values increases a fair amount of explorations than setting Q to zeros..
+
 """
 
 import numpy as np
