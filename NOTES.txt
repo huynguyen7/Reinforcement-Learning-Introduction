@@ -1,6 +1,9 @@
--In Reinforcement learning, the agent or decision-maker generates its training data by interacting with the world..
+** In Reinforcement learning, the agent or decision-maker generates its training data by interacting with the world..
 
 * Brief Introduction For Single State K-bandits:
+https://thomassimonini.medium.com/q-learning-lets-create-an-autonomous-taxi-part-1-2-3e8f5e764358
+https://thomassimonini.medium.com/q-learning-lets-create-an-autonomous-taxi-part-2-2-8cbafa19d7f5
+https://www.mlq.ai/what-is-reinforcement-learning/
 https://towardsdatascience.com/introduction-to-reinforcement-learning-c99c8c0720ef
 
 * Lectures:
@@ -49,3 +52,9 @@ https://www.baeldung.com/cs/epsilon-greedy-q-learning
 
 * The Bellman Equation:
 https://towardsdatascience.com/the-bellman-equation-59258a0d3fa7
+
+* Returns and Episodes:
+http://incompleteideas.net/book/first/ebook/node30.html
+
+* Stochastic policy vs Deterministic policy:
+https://ai.stackexchange.com/questions/12274/what-is-the-difference-between-a-stochastic-and-a-deterministic-policy

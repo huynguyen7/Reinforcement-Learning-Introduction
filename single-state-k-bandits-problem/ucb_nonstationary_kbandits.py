@@ -90,7 +90,7 @@ class Simulator:  # JUST FOR SIMULATING PURPOSES.
             # UCB Agent Learning Process
             for step in range(self.num_steps):
                 action = agent.pi(step+1)  # Agent acts
-                #[bandits[i].update_q(self.alpha) for i in range(self.k)] # Update q / Nonstationary environment
+                [bandits[i].update_q(self.alpha) for i in range(self.k)] # Update q / Nonstationary environment
                 reward = bandits[action].reward()  # Environment sends back reward
                 agent.learn(action, reward)  # Agent learns
                 
@@ -113,11 +113,11 @@ confidence_values = [0.1]
 
 for c in confidence_values:
     simulator = Simulator(
-            k=10,  # Number of actions/bandit tasks.
+            k=50,  # Number of actions/bandit tasks.
             std=1,  # Used with Gauss dist
             mean=0,  # Used with Gauss dist
             alpha=0.1,  # Learning rate
-            c=4,  # Degree of exploration / Confidence value
+            c=3,  # Degree of exploration / Confidence value
             num_runs=1,  # Number of episodes
             num_steps=1000)  # Lifetime
 

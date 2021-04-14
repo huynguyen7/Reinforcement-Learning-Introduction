@@ -70,7 +70,8 @@ class Simulator:  # JUST FOR SIMULATING PURPOSES.
     def simulate(self, log=True, check_convergence=False):
         for run in range(self.num_runs):
             if log:
-                rewards_history = np.zeros((self.k,self.num_steps), dtype=np.float32)
+                #rewards_history = np.zeros((self.k,self.num_steps), dtype=np.float32)
+                pass
             agent = Agent(self.k, self.epsilon)
             bandits = []
 
@@ -87,15 +88,16 @@ class Simulator:  # JUST FOR SIMULATING PURPOSES.
                 agent.learn(action, reward)  # Agent learns
                 
                 if log:
-                    rewards_history[action, step] = reward
+                    #rewards_history[action, step] = reward
                     if check_convergence:
                         if self.converge([bandit.get_q() for bandit in bandits], agent.get_Q()):
                             print(f'The Learning Process converged with {step+1} steps.')
                             break
 
             if log:
-                mean_rewards = np.array([rewards_history[i].sum()/agent.get_N()[i] for i in range(self.k) if agent.get_N()[i] != 0])
-                print(f"----RUN-{run+1}--EPSILON-{self.epsilon}----\n*Q_ESTIMATE: {mean_rewards}\n*Q_TRUTH: {[bandit.get_q() for bandit in bandits]}\n")
+                #mean_rewards = np.array([rewards_history[i].sum()/agent.get_N()[i] for i in range(self.k) if agent.get_N()[i] != 0])
+                print(f"----RUN-{run+1}--EPSILON_GREEDY-{self.epsilon}----\n*Q_ESTIMATE: {agent.get_Q()}\n\n*Q_TRUTH: {[bandit.get_q() for bandit in bandits]}\n\nN: {agent.get_N()}\n")
+
 
     def converge(self, q, Q):
         return True if not np.any(q-Q) else False
@@ -111,7 +113,7 @@ for epsilon in epsilons:
             mean=0,  # Used with Gauss dist
             epsilon=epsilon,
             num_runs=1,
-            num_steps=100000)
+            num_steps=1000)
 
     simulator.simulate(
             log=True,
