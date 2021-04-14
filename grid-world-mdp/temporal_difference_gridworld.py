@@ -5,7 +5,7 @@
     *Name: HUY NGUYEN
     *Figure 3.2 in the book.
 
-    - Applying Bellman Equation to update for all state-value at each cell in the 2D grid. This will eventually converge the state-values.
+    - Applying Temporal Difference Learning to update for all state-value at each cell in the 2D grid. This will eventually converge the state-values.
 
     - The cells of the grid correspond to the states of the environment. At each cell, four actions are possible: UP,DOWN,LEFT,RIGHT; which deterministically cause the agent to move one cell in the respective direction.
     Actions that would take the agent off the grid leave its location unchanged, but also result in a reward of `outline_grid_reward`. Other actions result in a reward of `default_reward`. Except those that move agent to A and B. From state A at (0,1), all four actions yield a reward of +10 and take the agent to A' at (4,1). From state B at (0,3), all actions yield a reward of +5 and take the agent to B' at (2,3).
@@ -43,8 +43,9 @@ class Environment:
 
 
 class Agent:
-    def __init__(self, grid_height=5, grid_width=5,gamma=0.9):
+    def __init__(self, grid_height=5, grid_width=5, gamma=0.9, alpha=0.1):
         self.gamma = gamma  # Discount rate
+        self.alpha = alpha  # Learning rate
         self.values = np.zeros(shape=(grid_height, grid_width), dtype=np.float64)  # State-value 2D grid
         self.new_values = np.zeros(shape=(grid_height, grid_width), dtype=np.float64) 
         self.actions = np.array([
@@ -53,14 +54,13 @@ class Agent:
             [0,-1],  # UP
             [0,1]    # DOWN
         ])
-        self.pi = 1/self.actions.shape[0]  # Applied uniform dist
 
     def reset(self):
         self.values = self.new_values
         self.new_values = np.zeros(shape=self.values.shape, dtype=np.float64)
 
     def learn(self, reward, current_state, next_state):  # BELLMAN EQUATION FOR UPDATING STATE-VALUE -> EVENTUALLY, IT WILL CONVERGE..
-        self.new_values[current_state[0], current_state[1]] += self.pi * (reward + self.gamma * self.values[next_state[0], next_state[1]])
+        self.values[current_state[0], current_state[1]] += self.alpha * (reward + self.gamma * self.values[next_state[0], next_state[1]] - self.values[current_state[0], current_state[1]])
 
     def get_actions(self):
         return self.actions
@@ -70,9 +70,9 @@ class Agent:
 
 
 class Simulator:
-    def __init__(self, grid_height=5, grid_width=5, gamma=0.9, default_reward=0, outline_grid_reward=-1):
+    def __init__(self, grid_height=5, grid_width=5, gamma=0.9, alpha=0.1, default_reward=0, outline_grid_reward=-1):
         self.env = Environment(grid_height, grid_width, default_reward, outline_grid_reward)
-        self.agent = Agent(grid_height, grid_width, gamma)
+        self.agent = Agent(grid_height, grid_width, gamma, alpha)
     
     def simulate(self, num_steps=100, log=False, plot=False):
         for step in range(num_steps):
@@ -82,7 +82,7 @@ class Simulator:
                         current_state = (i, j)
                         next_state, reward = self.env.interact(current_state, action)
                         self.agent.learn(reward, current_state, next_state)
-            self.agent.reset()
+            #self.agent.reset()
 
         if log:  # Log grid
             print('\t\t----STATE-VALUES-GRID----')
@@ -106,12 +106,13 @@ simulator = Simulator(
     grid_height=5,
     grid_width=5,
     gamma=0.9,
+    alpha=0.01,
     default_reward=0,
     outline_grid_reward=-1
 )
 
 simulator.simulate(
-    num_steps=500, 
+    num_steps=20000, 
     log=True,
     plot=False
 )
