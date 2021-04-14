@@ -7,13 +7,14 @@
 
     - Applying Bellman Equation to update for all state-value at each cell in the 2D grid. This will eventually converge the state-values.
 
-    - The cells of the grid correspond to the state-value of the environment. At each cell, four actions are possible: UP,DOWN,LEFT,RIGHT; which deterministically cause the agent to move one cell in the respective direction.
+    - The cells of the grid correspond to the states of the environment. At each cell, four actions are possible: UP,DOWN,LEFT,RIGHT; which deterministically cause the agent to move one cell in the respective direction.
     Actions that would take the agent off the grid leave its location unchanged, but also result in a reward of `outline_grid_reward`. Other actions result in a reward of `default_reward`. Except those that move agent to A and B. From state A at (0,1), all four actions yield a reward of +10 and take the agent to A' at (4,1). From state B at (0,3), all actions yield a reward of +5 and take the agent to B' at (2,3).
 
 """
 
 
 import numpy as np
+
 
 class Environment:
     def __init__(self, grid_height=5, grid_width=5, default_reward=0, outline_grid_reward=-1):
@@ -66,6 +67,7 @@ class Agent:
 
     def get_values(self):
         return self.values
+
 
 class Simulator:
     def __init__(self, grid_height=5, grid_width=5, gamma=0.9, default_reward=0, outline_grid_reward=-1):
