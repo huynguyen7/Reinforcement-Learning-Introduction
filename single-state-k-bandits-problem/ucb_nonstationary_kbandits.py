@@ -113,7 +113,7 @@ confidence_values = [0.1]
 
 for c in confidence_values:
     simulator = Simulator(
-            k=50,  # Number of actions/bandit tasks.
+            k=10,  # Number of actions/bandit tasks.
             std=1,  # Used with Gauss dist
             mean=0,  # Used with Gauss dist
             alpha=0.1,  # Learning rate

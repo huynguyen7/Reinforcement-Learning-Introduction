@@ -1,6 +1,7 @@
 # REINFORCEMENT-LEARNING ALGORITHMS
 This repository contains examples for Reinforcement Learning Algorithms:
 - Single-state K-bandits.
+- Gridworld MDP.
 
 
 ## Resources

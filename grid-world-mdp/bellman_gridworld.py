@@ -113,5 +113,5 @@ simulator = Simulator(
 simulator.simulate(
     num_steps=500, 
     log=True,
-    plot=False
+    plot=True
 )
