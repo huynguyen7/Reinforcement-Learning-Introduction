@@ -5,10 +5,9 @@
     *Name: HUY NGUYEN
     *Figure 3.2 in the book.
 
-    - Applying Bellman Equation to update for all state-value at each cell in the 2D grid. This will eventually converge the state-values.
     - This implementation uses Monte-Carlo Learning (update at the end of each episode).. However, this implementation does not let the agent decides its own actions.
     - In addition, this approach uniformly updates all the cells (loop i, loop j in the codes) for each action.
-    - Importantly, this approach find state-values if and only if we know the pi(For example, pi=0.25 in this grid).
+    - Importantly, this approach find OPTIMAL state-values if and only if we know the pi(For example, pi=0.25 in this grid).
 
     - The cells of the grid correspond to the states of the environment. At each cell, four actions are possible: UP,DOWN,LEFT,RIGHT; which deterministically cause the agent to move one cell in the respective direction.
     Actions that would take the agent off the grid leave its location unchanged, but also result in a reward of `outline_grid_reward`. Other actions result in a reward of `default_reward`. Except those that move agent to A and B. From state A at (0,1), all four actions yield a reward of +10 and take the agent to A' at (4,1). From state B at (0,3), all actions yield a reward of +5 and take the agent to B' at (2,3).
@@ -33,6 +32,7 @@ class Agent:
             [0,1]    # DOWN
         ], dtype=np.int8)
         self.pi = 1/self.actions.shape[0]  # Given uniform dist
+        self.tmp_values = []
 
     def update(self): 
         is_converged = np.abs(np.sum(self.values-self.new_values)) <= self.error_threshold
@@ -40,8 +40,12 @@ class Agent:
         self.new_values = np.zeros(shape=self.values.shape, dtype=np.float64)
         return is_converged
 
-    def learn(self, reward, current_state, next_state):  # BELLMAN EQUATION FOR UPDATING STATE-VALUE -> EVENTUALLY, IT WILL CONVERGE BASED ON THE LAW OF LARGE NUMBER..
-        self.new_values[current_state[0], current_state[1]] += self.pi * (reward + self.gamma * self.values[next_state[0], next_state[1]])
+    def step(self, reward, current_state, next_state):  # BELLMAN EQUATION FOR UPDATING STATE-VALUE -> EVENTUALLY, IT WILL CONVERGE BASED ON THE LAW OF LARGE NUMBER..
+        self.tmp_values.append(reward + self.gamma * self.values[next_state[0], next_state[1]])
+
+    def learn(self, current_state):
+        self.new_values[current_state[0], current_state[1]] = max(self.tmp_values)
+        self.tmp_values = []
 
     def get_actions(self):
         return self.actions
@@ -62,7 +66,8 @@ class Simulator:
                     current_state = [i, j]
                     for action in self.agent.get_actions():
                         next_state, reward = self.env.interact(current_state, action)
-                        self.agent.learn(reward, current_state, next_state)
+                        self.agent.step(reward, current_state, next_state)
+                    self.agent.learn(current_state)
             is_converged = self.agent.update()
             if is_converged:
                 print(f'--> The algorithm converged in {step+1} steps.')
@@ -92,11 +97,11 @@ simulator = Simulator(
     gamma=0.9,
     default_reward=0,
     outline_grid_reward=-1,
-    error_threshold=10e-3
+    error_threshold=10e-4
 )
 
 simulator.simulate(
-    num_steps=500,
+    num_steps=10000,
     log=True,  # Set this to true to log grid state-values.
     plot=False  # Set this to True to see heatmap
 )
