@@ -26,10 +26,10 @@ class Environment:
         self.default_reward = default_reward  # In-line default rewards
         self.outline_grid_reward = outline_grid_reward
 
-    def interact(self, state, action):  # STEP, Return immediate reward and next state
-        if state == (0,1):
+    def interact(self, state, action):  # STEP, Return next state, immediate reward
+        if state[0] == 0 and state[1] == 1:
             return [4,1], 10
-        elif state == (0,3):
+        elif state[0] == 0 and state[1] == 3:
             return [2,3], 5
 
         next_state = state + action
@@ -59,14 +59,10 @@ class Agent:
         ], dtype=np.int8)
         self.pi = 1/self.actions.shape[0]  # Given uniform dist
 
-    def update(self):
-        is_converged = False
-        if np.abs(np.sum(self.values-self.new_values)) <= self.error_threshold:
-            is_converged = True
-
+    def update(self): 
+        is_converged = np.abs(np.sum(self.values-self.new_values)) <= self.error_threshold
         self.values = self.new_values
         self.new_values = np.zeros(shape=self.values.shape, dtype=np.float64)
-
         return is_converged
 
 
@@ -89,7 +85,7 @@ class Simulator:
         for step in range(num_steps):
             for i in range(self.env.get_grid_width()):
                 for j in range(self.env.get_grid_height()):
-                    current_state = (i, j)
+                    current_state = [i, j]
                     for action in self.agent.get_actions():
                         next_state, reward = self.env.interact(current_state, action)
                         self.agent.learn(reward, current_state, next_state)
@@ -122,11 +118,11 @@ simulator = Simulator(
     gamma=0.9,
     default_reward=0,
     outline_grid_reward=-1,
-    error_threshold=10e-2
+    error_threshold=10e-3
 )
 
 simulator.simulate(
-    num_steps=500, 
+    num_steps=500,
     log=True,  # Set this to true to log grid state-values.
-    plot=True  # Set this to True to see heatmap
+    plot=False  # Set this to True to see heatmap
 )

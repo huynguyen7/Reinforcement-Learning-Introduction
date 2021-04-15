@@ -21,12 +21,10 @@ class Environment:
         self.default_reward = default_reward  # In-line default rewards
         self.outline_grid_reward = outline_grid_reward
 
-    def interact(self, state, action):  # STEP, Return immediate reward and next state
-        x = state[0]
-        y = state[1]
-        if x == 0 and y == 1:  # State A -> State A'
+    def interact(self, state, action):  # STEP, Return next state, immediate reward
+        if state[0] == 0 and state[1] == 1:  # State A -> State A'
             return [4,1], 10
-        elif x == 0 and y == 3:  # State B -> State B'
+        elif state[0] == 0 and state[1] == 3:  # State B -> State B'
             return [2,3], 5
 
         next_state = state + action
@@ -114,7 +112,7 @@ simulator = Simulator(
     alpha=0.1,  # Learning rate
     default_reward=0,
     outline_grid_reward=-1,
-    init_state=(0,0),
+    init_state=[0,0],
 )
 
 simulator.simulate(
