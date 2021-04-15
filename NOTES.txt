@@ -61,3 +61,6 @@ https://ai.stackexchange.com/questions/12274/what-is-the-difference-between-a-st
 
 * Policy gradients:
 https://www.freecodecamp.org/news/an-introduction-to-policy-gradients-with-cartpole-and-doom-495b5ef2207f/
+
+* Environments and actions space:
+https://machinelearningknowledge.ai/basic-understanding-of-environment-and-its-types-in-reinforcement-learning/#Environment_Action_Space_in_Reinforcement_Learning

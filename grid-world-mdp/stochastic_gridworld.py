@@ -4,12 +4,7 @@
 
     *Name: HUY NGUYEN
     *Figure 3.2 in the book.
-
-    - Applying Bellman Equation to update for all state-value at each cell in the 2D grid. This will eventually converge the state-values.
-    - This implementation uses Monte-Carlo Learning (update at the end of each episode).. However, this implementation does not let the agent decides its own actions.
-
-    - The cells of the grid correspond to the states of the environment. At each cell, four actions are possible: UP,DOWN,LEFT,RIGHT; which deterministically cause the agent to move one cell in the respective direction.
-    Actions that would take the agent off the grid leave its location unchanged, but also result in a reward of `outline_grid_reward`. Other actions result in a reward of `default_reward`. Except those that move agent to A and B. From state A at (0,1), all four actions yield a reward of +10 and take the agent to A' at (4,1). From state B at (0,3), all actions yield a reward of +5 and take the agent to B' at (2,3).
+    *This is a little bit difference than `bellman_gridworld.py` since it let the agent do the Q-learning with Temporal Difference Learning and the ABILITY to decides its own action with policy function.
 
 """
 
@@ -25,9 +20,11 @@ class Environment:
         self.outline_grid_reward = outline_grid_reward
 
     def interact(self, state, action):  # STEP, Return immediate reward and next state
-        if state == (0,1):
+        x = state[0]
+        y = state[1]
+        if x == 0 and y == 1:  # State A -> State A'
             return [4,1], 10
-        elif state == (0,3):
+        elif x == 0 and y == 3:  # State B -> State B'
             return [2,3], 5
 
         next_state = state + action
@@ -44,8 +41,9 @@ class Environment:
 
 
 class Agent:
-    def __init__(self, grid_height=5, grid_width=5,gamma=0.9):
+    def __init__(self, grid_height=5, grid_width=5, gamma=0.9, alpha=0.1, init_state=None, error_threshold=10e-2):
         self.gamma = gamma  # Discount rate
+        self.alpha = alpha  # Learning rate
         self.values = np.zeros(shape=(grid_height, grid_width), dtype=np.float64)  # State-value 2D grid
         self.new_values = np.zeros(shape=(grid_height, grid_width), dtype=np.float64) 
         self.actions = np.array([
@@ -54,14 +52,21 @@ class Agent:
             [0,-1],  # UP
             [0,1]    # DOWN
         ])
-        self.pi = 1/self.actions.shape[0]  # Applied uniform dist
+        self.current_state = init_state
+        self.error_threshold = error_threshold
 
-    def update(self):
-        self.values = self.new_values
-        self.new_values = np.zeros(shape=self.values.shape, dtype=np.float64)
+    def policy(self):  # Stochastic policy
+        return self.actions[np.random.choice(self.actions.shape[0])]
 
-    def learn(self, reward, current_state, next_state):  # BELLMAN EQUATION FOR UPDATING STATE-VALUE -> EVENTUALLY, IT WILL CONVERGE..
-        self.new_values[current_state[0], current_state[1]] += self.pi * (reward + self.gamma * self.values[next_state[0], next_state[1]])
+    def learn(self, reward, next_state):  # BELLMAN EQUATION FOR UPDATING STATE-VALUE -> EVENTUALLY, IT WILL CONVERGE..
+        # Bellman Equation
+        self.values[self.current_state[0], self.current_state[1]] += self.alpha * (reward + self.gamma * self.values[next_state[0], next_state[1]] - self.values[self.current_state[0], self.current_state[1]])
+
+    def get_current_state(self):
+        return self.current_state
+
+    def set_current_state(self, state):
+        self.current_state = state
 
     def get_actions(self):
         return self.actions
@@ -71,19 +76,21 @@ class Agent:
 
 
 class Simulator:
-    def __init__(self, grid_height=5, grid_width=5, gamma=0.9, default_reward=0, outline_grid_reward=-1):
+    def __init__(self, grid_height=5, grid_width=5, gamma=0.9, alpha=0.1, default_reward=0, outline_grid_reward=-1, init_state=None, error_threshold=10e-2):
         self.env = Environment(grid_height, grid_width, default_reward, outline_grid_reward)
-        self.agent = Agent(grid_height, grid_width, gamma)
+        self.agent = Agent(grid_height, grid_width, gamma, alpha, init_state, error_threshold)
     
     def simulate(self, num_steps=100, log=False, plot=False):
         for step in range(num_steps):
-            for i in range(self.env.get_grid_width()):
-                for j in range(self.env.get_grid_height()):
-                    current_state = (i, j)
-                    for action in self.agent.get_actions():
-                        next_state, reward = self.env.interact(current_state, action)
-                        self.agent.learn(reward, current_state, next_state)
-            self.agent.update()
+            current_state = self.agent.get_current_state()
+            action = self.agent.policy()
+            next_state, reward = self.env.interact(current_state, action)
+            is_converged = self.agent.learn(reward, next_state)
+            self.agent.set_current_state(next_state)
+
+            if is_converged:
+                print(f'Converged in {step+1} STEPS.')
+                break
 
         if log:  # Log grid
             print('\t\t----STATE-VALUES-GRID----')
@@ -106,13 +113,16 @@ class Simulator:
 simulator = Simulator(
     grid_height=5,
     grid_width=5,
-    gamma=0.9,
+    gamma=0.95,  # Discount rate
+    alpha=0.05,  # Learning rate
     default_reward=0,
-    outline_grid_reward=-1
+    outline_grid_reward=-1,
+    init_state=(0,0),
+    error_threshold=10e-9
 )
 
 simulator.simulate(
-    num_steps=500, 
+    num_steps=1000000, 
     log=True,
-    plot=True
+    plot=False
 )
