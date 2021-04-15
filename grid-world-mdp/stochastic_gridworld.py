@@ -4,7 +4,9 @@
 
     *Name: HUY NGUYEN
     *Figure 3.2 in the book.
-    *This is a little bit difference than `bellman_gridworld.py` since it let the agent do the Q-learning with Temporal Difference Learning and the ABILITY to decides its own action with policy function.
+
+    - This is a little bit difference than `bellman_gridworld.py` since it let the agent do the Q-learning with Temporal Difference Learning and the ABILITY to decides its own action with policy function.
+    - This approach finds state-value at each cell without knowing pi (Unlike `bellman_gridworld.py`).
 
 """
 
@@ -41,7 +43,7 @@ class Environment:
 
 
 class Agent:
-    def __init__(self, grid_height=5, grid_width=5, gamma=0.9, alpha=0.1, init_state=None, error_threshold=10e-2):
+    def __init__(self, grid_height=5, grid_width=5, gamma=0.9, alpha=0.1, init_state=None):
         self.gamma = gamma  # Discount rate
         self.alpha = alpha  # Learning rate
         self.values = np.zeros(shape=(grid_height, grid_width), dtype=np.float64)  # State-value 2D grid
@@ -51,15 +53,14 @@ class Agent:
             [1,0],   # RIGHT
             [0,-1],  # UP
             [0,1]    # DOWN
-        ])
+        ], dtype=np.int8)
         self.current_state = init_state
-        self.error_threshold = error_threshold
 
     def policy(self):  # Stochastic policy
         return self.actions[np.random.choice(self.actions.shape[0])]
 
-    def learn(self, reward, next_state):  # BELLMAN EQUATION FOR UPDATING STATE-VALUE -> EVENTUALLY, IT WILL CONVERGE..
-        # Bellman Equation
+    def learn(self, reward, next_state): 
+        # Bellman Equation + Temporal Difference Learning
         self.values[self.current_state[0], self.current_state[1]] += self.alpha * (reward + self.gamma * self.values[next_state[0], next_state[1]] - self.values[self.current_state[0], self.current_state[1]])
 
     def get_current_state(self):
@@ -76,21 +77,17 @@ class Agent:
 
 
 class Simulator:
-    def __init__(self, grid_height=5, grid_width=5, gamma=0.9, alpha=0.1, default_reward=0, outline_grid_reward=-1, init_state=None, error_threshold=10e-2):
+    def __init__(self, grid_height=5, grid_width=5, gamma=0.9, alpha=0.1, default_reward=0, outline_grid_reward=-1, init_state=None):
         self.env = Environment(grid_height, grid_width, default_reward, outline_grid_reward)
-        self.agent = Agent(grid_height, grid_width, gamma, alpha, init_state, error_threshold)
+        self.agent = Agent(grid_height, grid_width, gamma, alpha, init_state)
     
     def simulate(self, num_steps=100, log=False, plot=False):
         for step in range(num_steps):
             current_state = self.agent.get_current_state()
             action = self.agent.policy()
             next_state, reward = self.env.interact(current_state, action)
-            is_converged = self.agent.learn(reward, next_state)
+            self.agent.learn(reward, next_state)
             self.agent.set_current_state(next_state)
-
-            if is_converged:
-                print(f'Converged in {step+1} STEPS.')
-                break
 
         if log:  # Log grid
             print('\t\t----STATE-VALUES-GRID----')
@@ -114,15 +111,14 @@ simulator = Simulator(
     grid_height=5,
     grid_width=5,
     gamma=0.95,  # Discount rate
-    alpha=0.05,  # Learning rate
+    alpha=0.1,  # Learning rate
     default_reward=0,
     outline_grid_reward=-1,
     init_state=(0,0),
-    error_threshold=10e-9
 )
 
 simulator.simulate(
-    num_steps=1000000, 
+    num_steps=10000, 
     log=True,
     plot=False
 )
