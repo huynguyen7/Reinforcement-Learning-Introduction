@@ -7,7 +7,7 @@
 
     - This implementation uses Monte-Carlo Learning (update at the end of each episode).. However, this implementation does not let the agent decides its own actions.
     - In addition, this approach uniformly updates all the cells (loop i, loop j in the codes) for each action.
-    - Importantly, this approach find OPTIMAL state-values if and only if we know the pi(For example, pi=0.25 in this grid).
+    - Importantly, this approach find OPTIMAL optimal state-values if and only if we know the pi(For example, pi=0.25 in this grid).
 
     - The cells of the grid correspond to the states of the environment. At each cell, four actions are possible: UP,DOWN,LEFT,RIGHT; which deterministically cause the agent to move one cell in the respective direction.
     Actions that would take the agent off the grid leave its location unchanged, but also result in a reward of `outline_grid_reward`. Other actions result in a reward of `default_reward`. Except those that move agent to A and B. From state A at (0,1), all four actions yield a reward of +10 and take the agent to A' at (4,1). From state B at (0,3), all actions yield a reward of +5 and take the agent to B' at (2,3).
@@ -23,8 +23,8 @@ class Agent:
     def __init__(self, grid_height=5, grid_width=5,gamma=0.9, error_threshold=10e-2):
         self.gamma = gamma  # Discount rate
         self.error_threshold = error_threshold  # Just to check for convergence
-        self.values = np.zeros(shape=(grid_height, grid_width), dtype=np.float64)  # State-value 2D grid
-        self.new_values = np.zeros(shape=(grid_height, grid_width), dtype=np.float64) 
+        self.optimal_values = np.zeros(shape=(grid_height, grid_width), dtype=np.float64)  # State-value 2D grid
+        self.new_optimal_values = np.zeros(shape=(grid_height, grid_width), dtype=np.float64) 
         self.actions = np.array([
             [-1,0],  # LEFT
             [1,0],   # RIGHT
@@ -32,26 +32,26 @@ class Agent:
             [0,1]    # DOWN
         ], dtype=np.int8)
         self.pi = 1/self.actions.shape[0]  # Given uniform dist
-        self.tmp_values = []
+        self.tmp_optimal_values = []
 
     def update(self): 
-        is_converged = np.abs(np.sum(self.values-self.new_values)) <= self.error_threshold
-        self.values = self.new_values
-        self.new_values = np.zeros(shape=self.values.shape, dtype=np.float64)
+        is_converged = np.abs(np.sum(self.optimal_values-self.new_optimal_values)) <= self.error_threshold
+        self.optimal_values = self.new_optimal_values
+        self.new_optimal_values = np.zeros(shape=self.optimal_values.shape, dtype=np.float64)
         return is_converged
 
     def step(self, reward, current_state, next_state):  # BELLMAN EQUATION FOR UPDATING STATE-VALUE -> EVENTUALLY, IT WILL CONVERGE BASED ON THE LAW OF LARGE NUMBER..
-        self.tmp_values.append(reward + self.gamma * self.values[next_state[0], next_state[1]])
+        self.tmp_optimal_values.append(reward + self.gamma * self.optimal_values[next_state[0], next_state[1]])
 
     def learn(self, current_state):
-        self.new_values[current_state[0], current_state[1]] = max(self.tmp_values)
-        self.tmp_values = []
+        self.new_optimal_values[current_state[0], current_state[1]] = max(self.tmp_optimal_values)
+        self.tmp_optimal_values = []
 
     def get_actions(self):
         return self.actions
 
-    def get_values(self):
-        return self.values
+    def get_optimal_values(self):
+        return self.optimal_values
 
 
 class Simulator:
@@ -75,12 +75,12 @@ class Simulator:
 
         if log:  # Log grid
             print('\t\t----STATE-VALUES-GRID----')
-            print(f"{self.agent.get_values()}\n")
+            print(f"{self.agent.get_optimal_values()}\n")
         if plot:  # Plot heatmap
             import matplotlib.pyplot as plt
             plt.xticks(ticks=np.arange(self.env.get_grid_height()), labels=np.arange(self.env.get_grid_height()))
             plt.yticks(ticks=np.arange(self.env.get_grid_width()), labels=np.arange(self.env.get_grid_width()))
-            plt.imshow(self.agent.get_values(), cmap='Blues', interpolation='none')
+            plt.imshow(self.agent.get_optimal_values(), cmap='Blues', interpolation='none')
             plt.show()
 
     def get_agent(self):
@@ -102,6 +102,6 @@ simulator = Simulator(
 
 simulator.simulate(
     num_steps=10000,
-    log=True,  # Set this to true to log grid state-values.
+    log=True,  # Set this to true to log grid optimal state-values.
     plot=False  # Set this to True to see heatmap
 )
