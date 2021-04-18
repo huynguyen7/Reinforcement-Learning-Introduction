@@ -3,6 +3,7 @@
 * Brief Introduction For Single State K-bandits:
 https://thomassimonini.medium.com/q-learning-lets-create-an-autonomous-taxi-part-1-2-3e8f5e764358
 https://thomassimonini.medium.com/q-learning-lets-create-an-autonomous-taxi-part-2-2-8cbafa19d7f5
+http://www.inf.ed.ac.uk/teaching/courses/rl/slides17/3_DP_MC.pdf
 https://www.mlq.ai/what-is-reinforcement-learning/
 https://www.deeplearningwizard.com/deep_learning/deep_reinforcement_learning_pytorch/bellman_mdp/
 
