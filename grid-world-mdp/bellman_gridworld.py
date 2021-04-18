@@ -5,7 +5,7 @@
     *Name: HUY NGUYEN
     *Figure 3.2 in the book.
 
-    - Applying Bellman Equation to update for all state-value at each cell in the 2D grid. This will eventually converge the state-values.
+    - Applying Bellman Approximation Equation to update for all state-value at each cell in the 2D grid. This will eventually converge the state-values.
     - This implementation uses Monte-Carlo Learning (update at the end of each episode).. However, this implementation does not let the agent decides its own actions.
     - In addition, this approach uniformly updates all the cells (loop i, loop j in the codes) for each action.
     - Importantly, this approach find state-values if and only if we know the pi(For example, pi=0.25 in this grid).
@@ -35,7 +35,7 @@ class Agent:
         self.pi = 1/self.actions.shape[0]  # Given uniform dist
 
     def update(self): 
-        is_converged = np.abs(np.sum(self.values-self.new_values)) <= self.error_threshold
+        is_converged = np.sum(np.abs(self.values-self.new_values)) <= self.error_threshold
         self.values = self.new_values
         self.new_values = np.zeros(shape=self.values.shape, dtype=np.float64)
         return is_converged
@@ -49,11 +49,14 @@ class Agent:
     def get_values(self):
         return self.values
 
+    def get_error_threshold(self):
+        return self.error_threshold
+
 
 class Simulator:
     def __init__(self, grid_height=5, grid_width=5, gamma=0.9, default_reward=0, outline_grid_reward=-1, error_threshold=10e-2):
         self.env = Environment(grid_height, grid_width, default_reward, outline_grid_reward)
-        self.agent = Agent(grid_height, grid_width, gamma, error_threshold=10e-2)
+        self.agent = Agent(grid_height, grid_width, gamma, error_threshold)
     
     def simulate(self, num_steps=100, log=False, plot=False):
         for step in range(num_steps):
@@ -65,7 +68,7 @@ class Simulator:
                         self.agent.learn(reward, current_state, next_state)
             is_converged = self.agent.update()
             if is_converged:
-                print(f'--> The algorithm converged in {step+1} steps.')
+                print(f'--> The algorithm converged in {step+1} steps with error rate = {self.agent.get_error_threshold()}')
                 break
 
         if log:  # Log grid
@@ -92,7 +95,7 @@ simulator = Simulator(
     gamma=0.9,
     default_reward=0,
     outline_grid_reward=-1,
-    error_threshold=10e-3
+    error_threshold=10e-5
 )
 
 simulator.simulate(

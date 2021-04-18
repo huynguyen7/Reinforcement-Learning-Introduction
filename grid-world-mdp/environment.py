@@ -1,3 +1,7 @@
+"""
+    - Deterministic environment -> State transitional probability is 1.
+"""
+
 class Environment:
     def __init__(self, grid_height=5, grid_width=5, default_reward=0, outline_grid_reward=-1):
         self.grid_height = grid_height

@@ -36,7 +36,7 @@ class Agent():  # Agent class
         self.Q = np.zeros(k, dtype=np.float32)  # Estimate/Assumed Q
         self.N = np.zeros(k, dtype=np.int32)  # Number of interaction with respect to Q
         
-    def pi(self):  # Policy function -> Return action index
+    def pi(self):  # Policy function -> Return action index -> Deterministic policy
         greed = np.random.rand()  # Uniform dist
         return np.random.choice(range(self.k)) if greed <= self.epsilon else np.argmax(self.Q)
 

@@ -42,7 +42,7 @@ class Agent():  # Agent class
         self.Q = np.zeros(k, dtype=np.float64)  # Estimate/Assumed Q
         self.N = np.ones(k, dtype=np.float64)*1e-309  # Number of interaction with respect to Q
 
-    def pi(self, t):  # Policy function -> Return action index
+    def pi(self, t):  # Policy function -> Return action index, deterministic policy
         return np.argmax(self.Q + self.c*np.sqrt(np.log(t)/self.N))
     
     def learn(self, action, reward):  # Update Estimate/Assumed Q and its number of interactions

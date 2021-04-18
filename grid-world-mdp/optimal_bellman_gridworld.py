@@ -35,7 +35,7 @@ class Agent:
         self.tmp_optimal_values = []
 
     def update(self): 
-        is_converged = np.abs(np.sum(self.optimal_values-self.new_optimal_values)) <= self.error_threshold
+        is_converged = np.sum(np.abs(self.optimal_values-self.new_optimal_values)) <= self.error_threshold
         self.optimal_values = self.new_optimal_values
         self.new_optimal_values = np.zeros(shape=self.optimal_values.shape, dtype=np.float64)
         return is_converged
@@ -53,11 +53,14 @@ class Agent:
     def get_optimal_values(self):
         return self.optimal_values
 
+    def get_error_threshold(self):
+        return self.error_threshold
+
 
 class Simulator:
     def __init__(self, grid_height=5, grid_width=5, gamma=0.9, default_reward=0, outline_grid_reward=-1, error_threshold=10e-2):
         self.env = Environment(grid_height, grid_width, default_reward, outline_grid_reward)
-        self.agent = Agent(grid_height, grid_width, gamma, error_threshold=10e-2)
+        self.agent = Agent(grid_height, grid_width, gamma, error_threshold)
     
     def simulate(self, num_steps=100, log=False, plot=False):
         for step in range(num_steps):
@@ -70,7 +73,7 @@ class Simulator:
                     self.agent.learn(current_state)
             is_converged = self.agent.update()
             if is_converged:
-                print(f'--> The algorithm converged in {step+1} steps.')
+                print(f'--> The algorithm converged in {step+1} steps with error rate = {self.agent.get_error_threshold()}')
                 break
 
         if log:  # Log grid

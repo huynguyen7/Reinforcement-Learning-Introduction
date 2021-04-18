@@ -10,9 +10,11 @@ import matplotlib.pyplot as plt
 
 """ GENERATE GAUSS DATA """
 n = 100000 # Data size
-truth_mu = 5.0
-variance = 1.5
-population_data = np.random.normal(loc=truth_mu, scale=variance, size=n)
+#truth_mu = 5.0
+#variance = 1.5
+#population_data = np.random.normal(loc=truth_mu, scale=variance, size=n)
+population_data = np.random.exponential(size=n)
+truth_mu = population_data.mean()
 
 """ PARAMS """
 error_rate = 10e-4
