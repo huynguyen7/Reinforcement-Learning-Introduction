@@ -3,7 +3,7 @@
 """
 
     *Name: HUY NGUYEN
-    *Figure 3.2 in the book.
+    *Figure 3.5 in the book.
 
     - This implementation uses Monte-Carlo Learning (update at the end of each episode).. However, this implementation does not let the agent decides its own actions.
     - In addition, this approach uniformly updates all the cells (loop i, loop j in the codes) for each action.
