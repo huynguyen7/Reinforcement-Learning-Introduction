@@ -18,11 +18,12 @@
 
 import numpy as np
 
+
 ''' PARAMS '''
 gamma = 1  # Discounting rate
 alpha = 1e-9  # Error threshold
 CAPITAL = 100  # Goal
-p_h = 0.7  # Probability of head.
+p_h = 0.4  # Probability of head.
 max_floating = 10
 
 
@@ -87,6 +88,7 @@ def visualize(values, policies, log=True, plot=True):
         plt.title('State (Capital) / Final Policy (Optimal Policy)')
         plt.bar(np.arange(0,CAPITAL,1), policies[:CAPITAL])
         plt.show()
+
 
 values, policies = value_iteration(num_steps=100)
 visualize(
