@@ -4,8 +4,9 @@
 """
 
     *Name: HUY NGUYEN
-    *Value iteration to approximate optimal pi.
+    *Policy iteration to approximate optimal pi.
     *Figure 4.1
+    *NOTES: This implementation does not handle if multiple policy have the same values. In another word, we could have many optimal policies for such a state; but this implementation chose to show up to one optimal action.
 
 """
 
@@ -30,7 +31,7 @@ ACTIONS = np.array([
     [-1,0], # UP
     [1,0]   # DOWN
 ])
-ACTION_PROB = 0.25
+#ACTION_PROB = 0.25
 
 
 def interact(current_state, next_state):  # Return next_state, reward
@@ -49,22 +50,23 @@ def simulate(num_steps, log=False):
     policies = np.zeros(shape=(N, N), dtype=np.int8)
 
     for step in range(num_steps):
-        # Policy Evaluation
+        # Policy Evaluation/Monte Carlo prediction
         while True:
             new_values = values.copy()  # Deep copy
             theta = np.NINF  # Negative infinity
-            for i in reversed(range(N)):
+            for i in range(N):
                 for j in range(N):
                     current_state = np.array([i,j])
                     for action in ACTIONS:
                         next_state, reward = interact(current_state, current_state+action)
-                        new_values[i][j] += ACTION_PROB*(reward + gamma*values[next_state[0]][next_state[1]])
+                        #new_values[i][j] += ACTION_PROB*(reward + gamma*values[next_state[0]][next_state[1]])
+                        new_values[i][j] += reward + gamma*values[next_state[0]][next_state[1]]
                     values[i][j] = new_values[i][j]
                     theta = max(theta, np.abs(values-new_values).max())
             if theta < alpha:
                 break
 
-        # Policy Improvement
+        # Policy Improvement/Monte Carlo control
         policy_stable = True
         for i in range(N):
             for j in range(N):
@@ -77,7 +79,8 @@ def simulate(num_steps, log=False):
                         new_values.append(np.NINF)
                     else:
                         next_state, reward = interact(current_state, tmp_next_action)
-                        new_values.append(ACTION_PROB*(reward + gamma*values[next_state[0]][next_state[1]]))
+                        #new_values.append(ACTION_PROB*(reward + gamma*values[next_state[0]][next_state[1]]))
+                        new_values.append(reward + gamma*values[next_state[0]][next_state[1]])
                 policies[i][j] = np.argmax(np.array(new_values))
                 if policy_stable and current_action != policies[i][j]:
                     policy_stable = False
@@ -87,14 +90,14 @@ def simulate(num_steps, log=False):
 
     if log:
         print(f'--> CONVERGED IN {step+1} steps.')
-        print('----VALUES----')
-        print(values)
-        #print('----POLICIES----')
-        #print(policies)
-        #print('----ARROWS----')
-        #arrows_policies = [list(map(lambda x: ARROWS[x], policies[i])) for i in range(N)]
-        #for i in range(N):
-        #    print(arrows_policies[i])
+        #print('----VALUES----')
+        #print(values)
+        print('----POLICIES----')
+        print(policies)
+        print('----ARROWS----')
+        arrows_policies = [list(map(lambda x: ARROWS[x], policies[i])) for i in range(N)]
+        for i in range(N):
+            print(arrows_policies[i])
     return values, policies
 
 
