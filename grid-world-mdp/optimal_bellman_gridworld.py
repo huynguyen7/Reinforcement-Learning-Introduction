@@ -31,7 +31,6 @@ class Agent:
             [0,-1],  # UP
             [0,1]    # DOWN
         ], dtype=np.int8)
-        self.pi = 1/self.actions.shape[0]  # Given uniform dist
         self.tmp_optimal_values = []
 
     def update(self): 
@@ -40,7 +39,7 @@ class Agent:
         self.new_optimal_values = np.zeros(shape=self.optimal_values.shape, dtype=np.float64)
         return is_converged
 
-    def step(self, reward, current_state, next_state):  # BELLMAN EQUATION FOR UPDATING STATE-VALUE -> EVENTUALLY, IT WILL CONVERGE BASED ON THE LAW OF LARGE NUMBER..
+    def step(self, reward, next_state):  # BELLMAN EQUATION FOR UPDATING STATE-VALUE -> EVENTUALLY, IT WILL CONVERGE BASED ON THE LAW OF LARGE NUMBER..
         self.tmp_optimal_values.append(reward + self.gamma * self.optimal_values[next_state[0], next_state[1]])
 
     def learn(self, current_state):
@@ -69,7 +68,7 @@ class Simulator:
                     current_state = [i, j]
                     for action in self.agent.get_actions():
                         next_state, reward = self.env.interact(current_state, action)
-                        self.agent.step(reward, current_state, next_state)
+                        self.agent.step(reward, next_state)
                     self.agent.learn(current_state)
             is_converged = self.agent.update()
             if is_converged:
