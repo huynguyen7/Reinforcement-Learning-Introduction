@@ -69,3 +69,6 @@ https://machinelearningknowledge.ai/basic-understanding-of-environment-and-its-t
 * Model-free and Model-based RL:
 https://ai.stackexchange.com/questions/4456/whats-the-difference-between-model-free-and-model-based-reinforcement-learning
 https://en.wikipedia.org/wiki/Model-free_(reinforcement_learning)
+
+* On-policy vs Off-policy:
+https://leimao.github.io/blog/RL-On-Policy-VS-Off-Policy/
