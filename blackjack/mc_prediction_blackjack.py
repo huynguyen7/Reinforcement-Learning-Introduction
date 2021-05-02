@@ -40,6 +40,13 @@ class PlayerFrame(object):
 
     def add_card(self, card):
         self.cards.append(card)
+        (card_is_ace, card_value) = evaluate_card(card)
+        self.num_aces += 1 if card_is_ace else 0
+        # Set current sum
+        if not card_is_ace or (card_is_ace and self.sum+11 <= 21):
+            self.sum += card_value
+        else:
+            self.sum = self.sum + 1
 
     def get_card_list(self):
         return self.cards
@@ -58,15 +65,7 @@ class BlackjackDealer(PlayerFrame):
     def init_state(self):
         while len(self.cards) < 2:  # Dealer needs to have at least 2 cards at init state.
             card = self.deal_card()  # Draw a card
-            self.cards.append(card)  # Add card to dealer's hand
-            (card_is_ace, card_value) = evaluate_card(card)
-            self.num_aces += 1 if card_is_ace else 0
-
-            # Set dealer's current sum
-            if not card_is_ace or (card_is_ace and self.sum+11 <= 21):
-                self.sum += card_value
-            else:
-                self.sum = self.sum + 1
+            self.add_card(card)
 
 
 class BlackjackPlayer(PlayerFrame):
@@ -76,15 +75,7 @@ class BlackjackPlayer(PlayerFrame):
     def init_state(self, dealer):
         while self.sum < 12:  # Player needs to have at least cumulative sum of 12.
             card = dealer.deal_card()  # Draw a card
-            self.cards.append(card)  # Add card to player's hand
-            (card_is_ace, card_value) = evaluate_card(card)
-            self.num_aces += 1 if card_is_ace else 0
-
-            # Set player's current sum
-            if not card_is_ace or (card_is_ace and self.sum+11 <= 21):
-                self.sum += card_value
-            else:
-                self.sum = self.sum + 1
+            self.add_card(card)
 
 
 def evaluate_card(card):  # Evaluate card and return tuple (card_is_ace, card_value).
@@ -106,16 +97,6 @@ def simulation(player=None, dealer=None):  # Monte Carlo Sampling, return final_
 
         card = dealer.deal_card()  # Draw a card
         player.add_card(card)  # Add card to player's hand
-        (card_is_ace, card_value) = evaluate_card(card)
-        if card_is_ace:
-            player.set_num_aces(player.get_num_aces()+1)
-        
-        # Set player's current sum
-        if not card_is_ace or (card_is_ace and player.get_sum()+11 <= 21):
-            player.set_sum(player.get_sum() + card_value)
-        else:
-            player.set_sum(player.get_sum()+1)
-        
         if player.get_sum() > 21:  # Player is BUSTED!
             return -1, player_history
         
@@ -126,16 +107,6 @@ def simulation(player=None, dealer=None):  # Monte Carlo Sampling, return final_
 
         card = dealer.deal_card()  # Draw a card
         dealer.add_card(card)  # Add card to dealer's hand
-        (card_is_ace, card_value) = evaluate_card(card)
-        if card_is_ace:
-            dealer.set_num_aces(dealer.get_num_aces()+1)
-        
-        # Set dealer's current sum
-        if not card_is_ace or (card_is_ace and dealer.get_sum()+11 <= 21):
-            dealer.set_sum(dealer.get_sum() + card_value)
-        else:
-            dealer.set_sum(dealer.get_sum() + 1)
-        
         if dealer.get_sum() > 21:  # Dealer is BUSTED!
             return +1, player_history
     
