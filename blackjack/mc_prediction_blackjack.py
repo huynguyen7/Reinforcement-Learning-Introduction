@@ -4,9 +4,10 @@
 """
 
     Name: HUY NGUYEN
-    *BLACKJACK PROBLEM
-    *FIGURE 5.1 IN THE BOOK
-    *Assume that cards are drawn from an infinite deck (WITH REPLACEMENT)
+    *BLACKJACK PROBLEM.
+    *FIGURE 5.1 IN THE BOOK.
+    *FINITE, UNDISCOUNTING PROBLEM.
+    *Assume that cards are drawn from an infinite deck (WITH REPLACEMENT).
     *First-visit MC on-policy prediction, for estimating V with given INPUT POLICY.
 
 """
@@ -149,6 +150,7 @@ def simulation(player=None, dealer=None):  # Monte Carlo Sampling, return final_
     
 def mc_prediction(num_episodes, gamma=1.0):  # On-policy Monte Carlo Prediction
     assert num_episodes > 0, 'NUM_EPISODES CANNOT BE LESS THAN OR EQUAL 0.'
+    assert gamma > 0 and gamma <= 1, 'GAMMA NEEDS TO BE 0 < gamma <= 1'
 
     usable_ace_total_rewards = np.zeros(shape=(10,10), dtype=np.float64)
     usable_ace_N = np.ones(shape=(10,10), dtype=np.int64)
@@ -180,7 +182,8 @@ def mc_prediction(num_episodes, gamma=1.0):  # On-policy Monte Carlo Prediction
     
     return usable_ace_total_rewards/usable_ace_N, no_usable_ace_total_rewards/no_usable_ace_N  # Sampling average
 
-def visualize_figure_5_1(V_usable_ace_10k, V_no_usable_ace_10k, V_usable_ace_500k, V_no_usable_ace_500k, plot=False, save=False):
+
+def visualize_figure_5_1(V_usable_ace_10k, V_no_usable_ace_10k, V_usable_ace_500k, V_no_usable_ace_500k, show=False, save=False):
     import matplotlib.pyplot as plt
     import matplotlib
 
@@ -217,15 +220,17 @@ def visualize_figure_5_1(V_usable_ace_10k, V_no_usable_ace_10k, V_usable_ace_500
     plt.subplots_adjust(bottom=0.1, right=0.8, top=0.9)
     plt.colorbar(heatmap)
 
-    if plot:
+    if show:
         plt.show()
-
     if save:
         plt.savefig('./5_1.png')
         plt.close()
         
 
 """ FIGURE 5.1 """
-V_usable_ace_10k, V_no_usable_ace_10k = mc_prediction(num_episodes=10000, gamma=1.0)
-V_usable_ace_500k, V_no_usable_ace_500k = mc_prediction(num_episodes=500000, gamma=1.0)
-visualize_figure_5_1(V_usable_ace_10k, V_no_usable_ace_10k, V_usable_ace_500k, V_no_usable_ace_500k, plot=True, save=False)
+def figure_5_1(show=False, save=False):
+    V_usable_ace_10k, V_no_usable_ace_10k = mc_prediction(num_episodes=10000, gamma=1.0)
+    V_usable_ace_500k, V_no_usable_ace_500k = mc_prediction(num_episodes=500000, gamma=1.0)
+    visualize_figure_5_1(V_usable_ace_10k, V_no_usable_ace_10k, V_usable_ace_500k, V_no_usable_ace_500k, show, save)
+
+figure_5_1(show=True, save=False)
