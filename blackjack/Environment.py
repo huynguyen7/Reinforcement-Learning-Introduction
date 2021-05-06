@@ -52,7 +52,8 @@ class PlayerFrame(object):
 
 class BlackjackDealer(PlayerFrame):
     def policy(self):
-        return 1 if self.get_sum() >= 12 and self.get_sum() < 17 else 0
+        hand_sum = self.get_sum()
+        return 1 if hand_sum >= 12 and hand_sum < 17 else 0
 
     def deal_card(self):  # Get a random card from uniform dist WITH REPLACEMENT
         return np.random.randint(low=1, high=14)
@@ -68,9 +69,24 @@ class BlackjackDealer(PlayerFrame):
 
 class BlackjackPlayer(PlayerFrame):
     def policy(self):
-        return 1 if self.get_sum() >= 12 and self.get_sum() < 20 else 0
+        hand_sum = self.get_sum()
+        return 1 if hand_sum >= 12 and hand_sum < 20 else 0
 
     def init_state(self, dealer):
         while self.get_sum() < 12:  # Player needs to have at least cumulative sum of 12.
             card = dealer.deal_card()  # Draw a card
             self.add_card(card)
+
+    def greedy_policy(self, dealer_upcard, usable_ace_returns, usable_ace_N, no_usable_ace_returns, no_usable_ace_N):
+        player_sum = self.get_sum()
+        dealer_upcard = min(10, dealer_upcard)
+
+        # Get argmax of the average returns(s, a)
+        if self.has_usable_ace():
+            values_ = usable_ace_returns[player_sum-12, dealer_upcard-1, :]/usable_ace_N[player_sum-12, dealer_upcard-1, :]
+        else:
+            values_ = no_usable_ace_returns[player_sum-12, dealer_upcard-1, :]/no_usable_ace_N[player_sum-12, dealer_upcard-1, :]
+        return np.random.choice([action_ for action_, value_ in enumerate(values_) if value_ == np.max(values_)])
+ 
+
+

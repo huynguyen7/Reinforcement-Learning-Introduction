@@ -19,7 +19,7 @@ from tqdm import tqdm
 import numpy as np
 
 
-def simulation(player=None, dealer=None, random_action=None):  # Monte Carlo Sampling, return final_reward, player_history
+def simulation(player=None, dealer=None, random_action=None, input_policy=1, usable_ace_returns=None, usable_ace_N=None, no_usable_ace_returns=None, no_usable_ace_N=None):  # Monte Carlo Sampling, return final_reward, player_history
     assert player is not None and dealer is not None and random_action is not None, 'INVALID INPUT, CANNOT RUN SIMULATION.'
 
     player_history = []  # List of tuple (player's sum, dealer's upcard, player has usable ace)
@@ -28,11 +28,13 @@ def simulation(player=None, dealer=None, random_action=None):  # Monte Carlo Sam
         # Add to history for sampling average (MC Sampling/MC Method)
         player_history.append((player.get_sum(), dealer.get_upcard(), player.has_usable_ace()))
 
-        if random_action is None:  # Random exploring start.
-            action = player.policy() 
-        else:
+        if random_action is not None:  # Random exploring start.
             action = random_action
             random_action = None
+        elif input_policy == 1:  # Greedy Policy
+            action = player.greedy_policy(dealer.get_upcard(), usable_ace_returns, usable_ace_N, no_usable_ace_returns, no_usable_ace_N)
+        else:  # Player's default policy
+            action = player.policy()
 
         # POLICY: Player's decision, 1 is HIT (continue), 0 is STICK (stop).
         if action == 0:
@@ -87,7 +89,8 @@ def mc_exploring_starts(num_episodes=500000, gamma=1.0):  # Monte Carlo Explorin
         player.init_state(dealer)
 
         random_action = np.random.randint(0,1+1)
-        reward, player_history = simulation(player, dealer, random_action)
+        input_policy = 1 if episode != 0 else 0  # 1 is Greedy Policy, 0 is player's default policy
+        reward, player_history = simulation(player, dealer, random_action, input_policy, usable_ace_returns, usable_ace_N, no_usable_ace_returns, no_usable_ace_N)
         
         visited_states.clear()  # Flush out all (state, action) pairs from previous episode.
         for (player_sum, dealer_upcard, has_usable_ace) in reversed(player_history):
@@ -120,4 +123,4 @@ def figure_5_2(num_episodes=500000, show=False, save=False):
     no_usable_ace_optimal_V = np.max(no_usable_ace_Q, axis=-1)
     visualize_figure_5_2(usable_ace_optimal_V, usable_ace_optimal_pi, no_usable_ace_optimal_V, no_usable_ace_optimal_pi, show, save)
 
-figure_5_2(500000, show=True, save=False)
+figure_5_2(5000000, show=True, save=False)
