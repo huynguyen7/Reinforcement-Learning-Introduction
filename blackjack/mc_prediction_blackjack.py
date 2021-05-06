@@ -8,7 +8,7 @@
     *FIGURE 5.1 IN THE BOOK.
     *FINITE, UNDISCOUNTING PROBLEM.
     *Assume that cards are drawn from an infinite deck (WITH REPLACEMENT).
-    *First-visit MC on-policy prediction, for estimating V with given INPUT POLICY.
+    *Every-Visit MC On-policy Prediction (Policy Evaluation), for estimating V with given INPUT POLICY.
 
 """
 
@@ -60,9 +60,9 @@ def mc_prediction(num_episodes, gamma=1.0):  # On-policy Monte Carlo Prediction
     assert num_episodes > 0, 'NUM_EPISODES CANNOT BE LESS THAN OR EQUAL 0.'
     assert gamma > 0 and gamma <= 1, 'GAMMA NEEDS TO BE 0 < gamma <= 1'
 
-    usable_ace_total_rewards = np.zeros(shape=(10,10), dtype=np.float64)
+    usable_ace_returns = np.zeros(shape=(10,10), dtype=np.float64)
     usable_ace_N = np.ones(shape=(10,10), dtype=np.int64)
-    no_usable_ace_total_rewards = np.zeros(shape=(10,10), dtype=np.float64)
+    no_usable_ace_returns = np.zeros(shape=(10,10), dtype=np.float64)
     no_usable_ace_N = np.ones(shape=(10,10), dtype=np.int64)
     
     # Init states
@@ -76,10 +76,10 @@ def mc_prediction(num_episodes, gamma=1.0):  # On-policy Monte Carlo Prediction
         for (player_sum, dealer_upcard, has_usable_ace) in reversed(player_history):
             upcard_value = min(10, dealer_upcard)
             if has_usable_ace:  # Player has usable ace.
-                usable_ace_total_rewards[player_sum-12, upcard_value-1] = gamma*usable_ace_total_rewards[player_sum-12, upcard_value-1] + reward
+                usable_ace_returns[player_sum-12, upcard_value-1] = gamma*usable_ace_returns[player_sum-12, upcard_value-1] + reward
                 usable_ace_N[player_sum-12, upcard_value-1] += 1
             else:  # Player has no usable ace.
-                no_usable_ace_total_rewards[player_sum-12, upcard_value-1] = gamma*no_usable_ace_total_rewards[player_sum-12, upcard_value-1] + reward
+                no_usable_ace_returns[player_sum-12, upcard_value-1] = gamma*no_usable_ace_returns[player_sum-12, upcard_value-1] + reward
                 no_usable_ace_N[player_sum-12, upcard_value-1] += 1
 
         # Reset to init states.
@@ -88,7 +88,7 @@ def mc_prediction(num_episodes, gamma=1.0):  # On-policy Monte Carlo Prediction
         player.reset()
         player.init_state(dealer)
     
-    return usable_ace_total_rewards/usable_ace_N, no_usable_ace_total_rewards/no_usable_ace_N  # Sampling average
+    return usable_ace_returns/usable_ace_N, no_usable_ace_returns/no_usable_ace_N  # Sampling average
  
 
 """ FIGURE 5.1 """

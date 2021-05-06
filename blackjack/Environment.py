@@ -83,10 +83,10 @@ class BlackjackPlayer(PlayerFrame):
 
         # Get argmax of the average returns(s, a)
         if self.has_usable_ace():
-            values_ = usable_ace_returns[player_sum-12, dealer_upcard-1, :]/usable_ace_N[player_sum-12, dealer_upcard-1, :]
+            values = usable_ace_returns[player_sum-12, dealer_upcard-1, :]/usable_ace_N[player_sum-12, dealer_upcard-1, :]
         else:
-            values_ = no_usable_ace_returns[player_sum-12, dealer_upcard-1, :]/no_usable_ace_N[player_sum-12, dealer_upcard-1, :]
-        return np.random.choice([action_ for action_, value_ in enumerate(values_) if value_ == np.max(values_)])
+            values = no_usable_ace_returns[player_sum-12, dealer_upcard-1, :]/no_usable_ace_N[player_sum-12, dealer_upcard-1, :]
+        return np.random.choice([action for action, value in enumerate(values) if value == np.max(values)])  # List comprehension with predicate.
  
 
 

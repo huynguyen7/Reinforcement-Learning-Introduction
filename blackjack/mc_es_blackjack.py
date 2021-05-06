@@ -8,7 +8,7 @@
     *FIGURE 5.2 IN THE BOOK.
     *FINITE, UNDISCOUNTING PROBLEM.
     *Assume that cards are drawn from an infinite deck (WITH REPLACEMENT).
-    *MC Exploring Starts, for estimating optimal pi.
+    *First-Visit MC Control With Exploring Starts (Policy Prediction + Improvement), for estimating OPTIMAL POLICIES and OPTIMAL STATE VALUES.
 
 """
 
@@ -33,7 +33,7 @@ def simulation(player=None, dealer=None, random_action=None, input_policy=1, usa
             random_action = None
         elif input_policy == 1:  # Greedy Policy
             action = player.greedy_policy(dealer.get_upcard(), usable_ace_returns, usable_ace_N, no_usable_ace_returns, no_usable_ace_N)
-        else:  # Player's default policy
+        else:  # Player's default policy, input_policy == 0
             action = player.policy()
 
         # POLICY: Player's decision, 1 is HIT (continue), 0 is STICK (stop).
@@ -123,4 +123,4 @@ def figure_5_2(num_episodes=500000, show=False, save=False):
     no_usable_ace_optimal_V = np.max(no_usable_ace_Q, axis=-1)
     visualize_figure_5_2(usable_ace_optimal_V, usable_ace_optimal_pi, no_usable_ace_optimal_V, no_usable_ace_optimal_pi, show, save)
 
-figure_5_2(5000000, show=True, save=False)
+figure_5_2(500000, show=True, save=False)
