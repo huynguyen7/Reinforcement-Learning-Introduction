@@ -8,7 +8,7 @@
     *FIGURE 5.2 IN THE BOOK.
     *FINITE, UNDISCOUNTING PROBLEM.
     *Assume that cards are drawn from an infinite deck (WITH REPLACEMENT).
-    *First-Visit MC Control With Exploring Starts (Policy Prediction + Improvement), for estimating OPTIMAL POLICIES and OPTIMAL STATE VALUES.
+    *First-Visit MC Control With Epsilon Greedy (Policy Prediction + Improvement), for estimating OPTIMAL POLICIES and OPTIMAL STATE VALUES.
 
 """
 
@@ -19,17 +19,13 @@ from tqdm import tqdm
 import numpy as np
 
 
-def simulation(epsilon=0.1, player=None, dealer=None, random_action=None, input_policy=1, usable_ace_returns=None, usable_ace_N=None, no_usable_ace_returns=None, no_usable_ace_N=None):  # Monte Carlo Sampling, return final_reward, player_history
-    assert player is not None and dealer is not None and random_action is not None, 'INVALID INPUT, CANNOT RUN SIMULATION.'
+def simulation(epsilon=0.1, player=None, dealer=None, usable_ace_returns=None, usable_ace_N=None, no_usable_ace_returns=None, no_usable_ace_N=None):  # Monte Carlo Sampling, return final_reward, player_history
+    assert player is not None and dealer is not None, 'INVALID INPUT, CANNOT RUN SIMULATION.'
 
     player_history = []  # List of tuple (player's sum, dealer's upcard, player has usable ace)
 
     while True:  # Player's turn
-        if random_action is not None:  # Random exploring start.
-            action = random_action
-            random_action = None
-        else:
-            action = player.epsilon_greedy_policy(epsilon, dealer.get_upcard(), usable_ace_returns, usable_ace_N, no_usable_ace_returns, no_usable_ace_N)
+        action = player.epsilon_greedy_policy(epsilon, dealer.get_upcard(), usable_ace_returns, usable_ace_N, no_usable_ace_returns, no_usable_ace_N)
 
         # Add to history for sampling average (MC Sampling/MC Method)
         player_history.append(((player.get_sum(), dealer.get_upcard(), player.has_usable_ace()), action))
@@ -74,21 +70,18 @@ def mc_epsilon_greedy(num_episodes=500000, gamma=1.0, epsilon=0.1):  # Monte Car
     no_usable_ace_returns = np.zeros(shape=(10,10,2), dtype=np.float64)  # player_sum, dealer_upcard, action
     no_usable_ace_N = np.ones(shape=(10,10,2), dtype=np.int64)
 
-    # Stochastic initialization
     dealer = BlackjackDealer()
     player = BlackjackPlayer()
     visited_states = set()
 
     for episode in tqdm(range(num_episodes)):
-        # Stochastic initialization => EXPLORING START.
+        # Stochastic initialization.
         dealer.reset()
         dealer.init_state()
         player.reset()
         player.init_state(dealer)
 
-        random_action = np.random.randint(0,1+1)
-        input_policy = 1 if episode != 0 else 0  # 1 is Greedy Policy, 0 is player's default policy
-        reward, player_history = simulation(epsilon, player, dealer, random_action, input_policy, usable_ace_returns, usable_ace_N, no_usable_ace_returns, no_usable_ace_N)
+        reward, player_history = simulation(epsilon, player, dealer, usable_ace_returns, usable_ace_N, no_usable_ace_returns, no_usable_ace_N)
         
         visited_states.clear()  # Flush out all (state, action) pairs from previous episode.
         for ((player_sum, dealer_upcard, has_usable_ace), action) in reversed(player_history):
