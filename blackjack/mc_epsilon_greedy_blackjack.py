@@ -19,7 +19,7 @@ from tqdm import tqdm
 import numpy as np
 
 
-def simulation(player=None, dealer=None, random_action=None, input_policy=1, usable_ace_returns=None, usable_ace_N=None, no_usable_ace_returns=None, no_usable_ace_N=None):  # Monte Carlo Sampling, return final_reward, player_history
+def simulation(epsilon=0.1, player=None, dealer=None, random_action=None, input_policy=1, usable_ace_returns=None, usable_ace_N=None, no_usable_ace_returns=None, no_usable_ace_N=None):  # Monte Carlo Sampling, return final_reward, player_history
     assert player is not None and dealer is not None and random_action is not None, 'INVALID INPUT, CANNOT RUN SIMULATION.'
 
     player_history = []  # List of tuple (player's sum, dealer's upcard, player has usable ace)
@@ -28,12 +28,8 @@ def simulation(player=None, dealer=None, random_action=None, input_policy=1, usa
         if random_action is not None:  # Random exploring start.
             action = random_action
             random_action = None
-        #elif input_policy == 1:  # Greedy Policy
-        #    action = player.greedy_policy(dealer.get_upcard(), usable_ace_returns, usable_ace_N, no_usable_ace_returns, no_usable_ace_N)
-        #else:  # Player's default policy, input_policy == 0
-        #    action = player.policy()
         else:
-            action = player.epsilon_greedy_policy(0.1, dealer.get_upcard(), usable_ace_returns, usable_ace_N, no_usable_ace_returns, no_usable_ace_N)
+            action = player.epsilon_greedy_policy(epsilon, dealer.get_upcard(), usable_ace_returns, usable_ace_N, no_usable_ace_returns, no_usable_ace_N)
 
         # Add to history for sampling average (MC Sampling/MC Method)
         player_history.append(((player.get_sum(), dealer.get_upcard(), player.has_usable_ace()), action))
@@ -66,7 +62,7 @@ def simulation(player=None, dealer=None, random_action=None, input_policy=1, usa
         return -1, player_history
 
 
-def mc_exploring_starts(num_episodes=500000, gamma=1.0):  # Monte Carlo Exploring Starts
+def mc_epsilon_greedy(num_episodes=500000, gamma=1.0, epsilon=0.1):  # Monte Carlo Exploring Starts
     assert num_episodes > 0, 'NUM_EPISODES CANNOT BE LESS THAN OR EQUAL 0.'
     assert gamma > 0 and gamma <= 1, 'GAMMA NEEDS TO BE 0 < gamma <= 1'
 
@@ -92,7 +88,7 @@ def mc_exploring_starts(num_episodes=500000, gamma=1.0):  # Monte Carlo Explorin
 
         random_action = np.random.randint(0,1+1)
         input_policy = 1 if episode != 0 else 0  # 1 is Greedy Policy, 0 is player's default policy
-        reward, player_history = simulation(player, dealer, random_action, input_policy, usable_ace_returns, usable_ace_N, no_usable_ace_returns, no_usable_ace_N)
+        reward, player_history = simulation(epsilon, player, dealer, random_action, input_policy, usable_ace_returns, usable_ace_N, no_usable_ace_returns, no_usable_ace_N)
         
         visited_states.clear()  # Flush out all (state, action) pairs from previous episode.
         for ((player_sum, dealer_upcard, has_usable_ace), action) in reversed(player_history):
@@ -119,10 +115,10 @@ def mc_exploring_starts(num_episodes=500000, gamma=1.0):  # Monte Carlo Explorin
     return usable_ace_Q, no_usable_ace_Q, usable_ace_optimal_pi, no_usable_ace_optimal_pi
 
 def figure_5_2(num_episodes=500000, show=False, save=False):
-    usable_ace_Q, no_usable_ace_Q, usable_ace_optimal_pi, no_usable_ace_optimal_pi = mc_exploring_starts(num_episodes, gamma=1.0)
+    usable_ace_Q, no_usable_ace_Q, usable_ace_optimal_pi, no_usable_ace_optimal_pi = mc_epsilon_greedy(num_episodes, gamma=1.0, epsilon=0.1)
     # Find optimal state values.
     usable_ace_optimal_V = np.max(usable_ace_Q, axis=-1)
     no_usable_ace_optimal_V = np.max(no_usable_ace_Q, axis=-1)
     visualize_figure_5_2(usable_ace_optimal_V, usable_ace_optimal_pi, no_usable_ace_optimal_V, no_usable_ace_optimal_pi, show, save)
 
-figure_5_2(500000, show=True, save=False)
+figure_5_2(show=True, save=False)
