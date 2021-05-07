@@ -65,7 +65,7 @@ def simulation(player=None, dealer=None, init_action=None, usable_ace_optimal_pi
         return -1, player_history
 
 
-def mc_epsilon_greedy(num_episodes=500000, gamma=1.0, epsilon=0.1):  # Monte Carlo Exploring Starts
+def mc_exploring_starts(num_episodes=500000, gamma=1.0, epsilon=0.1):  # Monte Carlo Exploring Starts
     assert num_episodes > 0, 'NUM_EPISODES CANNOT BE LESS THAN OR EQUAL 0.'
     assert gamma > 0 and gamma <= 1, 'GAMMA NEEDS TO BE 0 < gamma <= 1'
 
@@ -94,7 +94,7 @@ def mc_epsilon_greedy(num_episodes=500000, gamma=1.0, epsilon=0.1):  # Monte Car
         dealer.init_state()
         player.reset()
         player.init_state(dealer)
-        init_action = np.random.randint(0,2)
+        init_action = np.random.randint(0,2)  # EXPLORING START
 
         reward, player_history = simulation(player, dealer, init_action, usable_ace_optimal_pi, no_usable_ace_optimal_pi)
         
@@ -123,7 +123,7 @@ def mc_epsilon_greedy(num_episodes=500000, gamma=1.0, epsilon=0.1):  # Monte Car
     return usable_ace_Q, no_usable_ace_Q, usable_ace_optimal_pi, no_usable_ace_optimal_pi
 
 def figure_5_2(num_episodes=500000, show=False, save=False):
-    usable_ace_Q, no_usable_ace_Q, usable_ace_optimal_pi, no_usable_ace_optimal_pi = mc_epsilon_greedy(num_episodes, gamma=1.0, epsilon=0.1)
+    usable_ace_Q, no_usable_ace_Q, usable_ace_optimal_pi, no_usable_ace_optimal_pi = mc_exploring_starts(num_episodes, gamma=1.0, epsilon=0.1)
     # Find optimal state values.
     usable_ace_optimal_V = np.max(usable_ace_Q, axis=-1)
     no_usable_ace_optimal_V = np.max(no_usable_ace_Q, axis=-1)
