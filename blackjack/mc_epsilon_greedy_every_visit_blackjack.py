@@ -8,7 +8,7 @@
     *FIGURE 5.2 IN THE BOOK.
     *FINITE, UNDISCOUNTING PROBLEM.
     *Assume that cards are drawn from an infinite deck (WITH REPLACEMENT).
-    *First-Visit MC Control With Epsilon Greedy (Policy Prediction + Improvement), for estimating OPTIMAL POLICIES and OPTIMAL STATE VALUES.
+    *Every-Visit MC Control With Epsilon Greedy (Policy Prediction + Improvement), for estimating OPTIMAL POLICIES and OPTIMAL STATE VALUES.
 
 """
 
@@ -58,7 +58,7 @@ def simulation(epsilon=0.1, player=None, dealer=None, usable_ace_returns=None, u
         return -1, player_history
 
 
-def mc_epsilon_greedy(num_episodes=500000, gamma=1.0, epsilon=0.1):  # Monte Carlo Exploring Starts
+def mc_epsilon_greedy(num_episodes=500000, gamma=1.0, epsilon=0.1):  # Monte Carlo Epsilon Greedy
     assert num_episodes > 0, 'NUM_EPISODES CANNOT BE LESS THAN OR EQUAL 0.'
     assert gamma > 0 and gamma <= 1, 'GAMMA NEEDS TO BE 0 < gamma <= 1'
 
@@ -72,7 +72,6 @@ def mc_epsilon_greedy(num_episodes=500000, gamma=1.0, epsilon=0.1):  # Monte Car
 
     dealer = BlackjackDealer()
     player = BlackjackPlayer()
-    visited_states = set()
 
     for episode in tqdm(range(num_episodes)):
         # Stochastic initialization.
@@ -83,19 +82,15 @@ def mc_epsilon_greedy(num_episodes=500000, gamma=1.0, epsilon=0.1):  # Monte Car
 
         reward, player_history = simulation(epsilon, player, dealer, usable_ace_returns, usable_ace_N, no_usable_ace_returns, no_usable_ace_N)
         
-        visited_states.clear()  # Flush out all (state, action) pairs from previous episode.
         for ((player_sum, dealer_upcard, has_usable_ace), action) in reversed(player_history):
             dealer_upcard = min(10, dealer_upcard)
-            # If (state,action) pair is already visited, no need to update => FIRST VISIT UPDATE.
-            state_action = ((player_sum, dealer_upcard, has_usable_ace), action)
-            if state_action not in visited_states:
-                visited_states.add(state_action)
-                if has_usable_ace:
-                    usable_ace_returns[player_sum-12, dealer_upcard-1, action] = gamma*usable_ace_returns[player_sum-12, dealer_upcard-1, action] + reward
-                    usable_ace_N[player_sum-12, dealer_upcard-1, action] += 1
-                else:
-                    no_usable_ace_returns[player_sum-12, dealer_upcard-1, action] = gamma*no_usable_ace_returns[player_sum-12, dealer_upcard-1, action] + reward
-                    no_usable_ace_N[player_sum-12, dealer_upcard-1, action] += 1
+            # EVERY-VISIT UPDATE.
+            if has_usable_ace:
+                usable_ace_returns[player_sum-12, dealer_upcard-1, action] = gamma*usable_ace_returns[player_sum-12, dealer_upcard-1, action] + reward
+                usable_ace_N[player_sum-12, dealer_upcard-1, action] += 1
+            else:
+                no_usable_ace_returns[player_sum-12, dealer_upcard-1, action] = gamma*no_usable_ace_returns[player_sum-12, dealer_upcard-1, action] + reward
+                no_usable_ace_N[player_sum-12, dealer_upcard-1, action] += 1
     
     # Sampling average.
     usable_ace_Q = usable_ace_returns/usable_ace_N
