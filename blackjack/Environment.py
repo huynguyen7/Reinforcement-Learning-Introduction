@@ -91,7 +91,6 @@ class BlackjackPlayer(PlayerFrame):
     def epsilon_greedy_policy(self, epsilon, dealer_upcard, usable_ace_returns, usable_ace_N, no_usable_ace_returns, no_usable_ace_N):
         player_sum = self.get_sum()
         dealer_upcard = min(10, dealer_upcard)
-
         greed = np.random.rand()  # Uniform dist
         if greed <= epsilon:
             return np.random.choice([0,1])

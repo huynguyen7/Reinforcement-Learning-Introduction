@@ -97,7 +97,6 @@ def mc_exploring_starts(num_episodes=500000, gamma=1.0, epsilon=0.1):  # Monte C
 
         reward, player_history = simulation(player, dealer, init_action, usable_ace_optimal_pi, no_usable_ace_optimal_pi)
         
-        G = 0  # Return
         for ((player_sum, dealer_upcard, has_usable_ace), action) in reversed(player_history):
             dealer_upcard = min(10, dealer_upcard)
             # EVERY-VISIT UPDATE.
