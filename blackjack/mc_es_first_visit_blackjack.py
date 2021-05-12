@@ -125,4 +125,4 @@ def figure_5_2(num_episodes=500000, show=False, save=False):
     no_usable_ace_optimal_V = np.max(no_usable_ace_Q, axis=-1)
     visualize_figure_5_2(usable_ace_optimal_V, usable_ace_optimal_pi, no_usable_ace_optimal_V, no_usable_ace_optimal_pi, show, save)
 
-figure_5_2(500000, show=True, save=False)
+figure_5_2(2000000, show=True, save=False)

@@ -26,7 +26,7 @@ def simulation(player=None, dealer=None, init_action=None, usable_ace_optimal_pi
     player_history = []  # List of tuple (player's sum, dealer's upcard, player has usable ace)
 
     while True:  # Player's turn
-        if init_action is not None:
+        if init_action is not None:  # Exploring Starts
             action = init_action
             init_action = None
         elif player.has_usable_ace():

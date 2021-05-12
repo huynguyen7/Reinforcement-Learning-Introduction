@@ -12,8 +12,13 @@ class PlayerFrame(object):
     def reset(self):
         self.cards = []
         self.usable_ace = False
+        self.already_calc_sum = False
+        self.sum = 0
 
     def get_sum(self):
+        if self.already_calc_sum:
+            return self.sum
+
         num_aces = 0
         hand_sum = 0
         for card in self.cards:
@@ -34,8 +39,10 @@ class PlayerFrame(object):
         else:
             hand_sum += 1
             self.usable_ace = False
-
-        return hand_sum
+        
+        self.sum = hand_sum
+        self.already_calc_sum = True
+        return self.sum
     
     def has_usable_ace(self):
         return self.usable_ace
@@ -45,6 +52,7 @@ class PlayerFrame(object):
 
     def add_card(self, card):
         self.cards.append(card)
+        self.already_calc_sum = False
         
     def get_card_list(self):
         return self.cards
