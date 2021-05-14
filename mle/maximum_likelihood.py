@@ -6,6 +6,7 @@
     *Name: Huy Nguyen
     *EXTREMELY NAIVE MLE!!
     *Coin Tossing Game.
+    *Source: https://en.wikipedia.org/wiki/Maximum_likelihood_estimation
 
 """
 
