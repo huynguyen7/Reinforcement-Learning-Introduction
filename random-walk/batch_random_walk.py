@@ -67,7 +67,7 @@ def batch_monte_carlo(num_episodes=100, truth_V=None, error_interval=10, error_t
                 tmp_V = V.copy()  # Deep copy
                 for s in batch:
                     # Every-visit MC update.
-                    tmp_V[s] = tmp_V[s] + alpha*(G-tmp_V[s])
+                    tmp_V[s] = tmp_V[s] + alpha*(G-V[s])
             if np.sum(np.abs(V-tmp_V)) <= error_threshold:  # Check for convergence.
                 break
             V = tmp_V
@@ -112,7 +112,7 @@ def batch_tabular_temporal_difference(num_episodes=100, truth_V=None, error_inte
             for batch in batch_history:
                 for (s, s_prime) in batch:
                     # TD Update
-                    tmp_V[s] = tmp_V[s] + alpha*(reward + gamma*tmp_V[s_prime] - tmp_V[s])
+                    tmp_V[s] = tmp_V[s] + alpha*(reward + gamma*V[s_prime] - V[s])
             if np.sum(np.abs(V-tmp_V)) <= error_threshold:  # Check for convergence.
                 break
             V = tmp_V
