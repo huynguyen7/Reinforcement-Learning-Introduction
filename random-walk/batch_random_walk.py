@@ -1,6 +1,3 @@
-#!/Users/huynguyen/miniforge3/envs/math/bin/python3
-
-
 """
 
     *Name: Huy Nguyen
@@ -19,7 +16,7 @@ np.random.seed(1)  # Deterministic seed.
 
 
 ''' PARAMS '''
-alpha = 1e-6 # Learning rate.
+alpha = 1e-4 # Learning rate.
 gamma = 1.0  # Discounting rate.
 error_threshold = 1e-3  # Used for checking convergence.
 
@@ -29,14 +26,15 @@ def pi():  # 0 is LEFT, 1 is RIGHT.
 
 
 def rmse(estimated_V, truth_V):
-    return np.sqrt(((estimated_V-truth_V)**2).sum()/5.0)  # Divided by 5 since we only consider [A,B,C,D,E], not accounting terminal states.
+    return np.sqrt(((estimated_V[1:-1]-truth_V[1:-1])**2).sum()/5.0)  # Divided by 5 since we only consider [A,B,C,D,E], not accounting terminal states.
 
 
 def batch_monte_carlo(num_episodes=100, truth_V=None, error_interval=10):  # Batch MC Update
     assert num_episodes > 0, 'NUM_EPISODES CANNOT BE A NON-POSITIVE NUMBER.'
 
-    V = np.zeros(7, dtype=np.float64)
-    V[6] = 1.0
+    V = np.ones(7, dtype=np.float64)*0.5
+    V[0] = 0.0
+    V[6] = 0.0
     rmse_mc = []  # Just for plotting purposes
     batch_history = []
 
@@ -69,19 +67,20 @@ def batch_monte_carlo(num_episodes=100, truth_V=None, error_interval=10):  # Bat
                 for s in batch:
                     # Every-visit MC update.
                     tmp_V[s] = tmp_V[s] + alpha*(G-V[s])
-            if np.sum(np.abs(V-tmp_V)) <= error_threshold:  # Check for convergence.
+            if np.sum(np.abs(V-tmp_V)) < error_threshold:  # Check for convergence.
                 break
             V = tmp_V
 
     rmse_mc.append(rmse(V, truth_V))
-    return V, rmse_mc
+    return V[1:-1], rmse_mc
 
 
 def batch_tabular_temporal_difference(num_episodes=100, truth_V=None, error_interval=10):  # Batch TD(0) Update
     assert num_episodes > 0, 'NUM_EPISODES CANNOT BE A NON-POSITIVE NUMBER.'
 
-    V = np.zeros(7, dtype=np.float64)
-    V[6] = 1.0
+    V = np.ones(7, dtype=np.float64)*0.5
+    V[6] = 0.0
+    V[0] = 0.0
     rmse_td = []  # Just for plotting purposes
     batch_history = []
 
@@ -99,27 +98,26 @@ def batch_tabular_temporal_difference(num_episodes=100, truth_V=None, error_inte
                 s_prime = s-1
             else:  # RIGHT
                 s_prime = s+1
-            batch.append((s, s_prime))
+            reward = 0.0 if s_prime != 6 else 1.0  # All rewards are 0 except state 6
+            batch.append((s, s_prime, reward))
 
             s = s_prime
             if s == 0 or s == 6:  # Reach terminal states.
-                returns = 1.0 if s == 6 else 0.0
                 break
         
-        reward = 0.0  # All rewards are 0
         batch_history.append(batch)
         while True:  # Keep running until the algorithm converges.
             tmp_V = V.copy()  # Deep copy
             for batch in batch_history:
-                for (s, s_prime) in batch:
+                for (s, s_prime, reward) in batch:
                     # TD Update
-                    tmp_V[s] = tmp_V[s] + alpha*(reward + gamma*V[s_prime] - V[s])
-            if np.sum(np.abs(V-tmp_V)) <= error_threshold:  # Check for convergence.
+                    tmp_V[s] = tmp_V[s] + alpha*(reward + gamma*V[s_prime]-V[s])
+            if np.sum(np.abs(V-tmp_V)) < error_threshold:  # Check for convergence.
                 break
             V = tmp_V
 
     rmse_td.append(rmse(V, truth_V))
-    return V, rmse_td
+    return V[1:-1], rmse_td
 
 
 def plot_figure(show=False, save=False, num_episodes=None, truth_V=None, estimated_V_td=None, estimated_V_mc=None, rmse_td=None, rmse_mc=None, error_interval=None):
@@ -135,7 +133,7 @@ def plot_figure(show=False, save=False, num_episodes=None, truth_V=None, estimat
     plt.plot(estimated_V_mc, label='Batch MC')
     plt.plot(truth_V, label='TRUTH')
     plt.grid()
-    plt.xticks(ticks=np.arange(0,7,1), labels=['0','A','B','C','D','E','1'])
+    plt.xticks(ticks=np.arange(0,5,1), labels=['A','B','C','D','E'])
     plt.xlabel('State', fontsize=13)
     plt.ylabel('V', fontsize=13).set_rotation(0)
     plt.legend()
@@ -162,10 +160,10 @@ def plot_figure(show=False, save=False, num_episodes=None, truth_V=None, estimat
 if __name__ == "__main__":
     # Just for comparing purposes.
     truth_V = np.linspace(0,1,7)
-    error_interval = 10
+    error_interval = 100
 
     # Run TD(0) and MC.
-    num_episodes = 100  # Number of episodes
+    num_episodes = 1000  # Number of episodes
     print(f'ALPHA = {alpha}, GAMMA = {gamma}')
     print('--> RUNNING TD(0)..')
     estimated_V_td, rmse_td = batch_tabular_temporal_difference(num_episodes, truth_V, error_interval)
@@ -173,4 +171,4 @@ if __name__ == "__main__":
     estimated_V_mc, rmse_mc = batch_monte_carlo(num_episodes, truth_V, error_interval)
 
     # Plot
-    plot_figure(show=True, save=False, num_episodes=num_episodes, truth_V=truth_V, estimated_V_td=estimated_V_td, estimated_V_mc=estimated_V_mc, rmse_td=rmse_td, rmse_mc=rmse_mc, error_interval=error_interval)
+    plot_figure(show=True, save=False, num_episodes=num_episodes, truth_V=truth_V[1:-1], estimated_V_td=estimated_V_td, estimated_V_mc=estimated_V_mc, rmse_td=rmse_td, rmse_mc=rmse_mc, error_interval=error_interval)
