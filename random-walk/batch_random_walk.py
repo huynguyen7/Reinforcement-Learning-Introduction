@@ -15,11 +15,11 @@ import numpy as np
 from tqdm import tqdm
 
 
-np.random.seed(1)  # Deterministic seed.
+#np.random.seed(1)  # Deterministic seed.
 
 
 ''' PARAMS '''
-alpha = 0.1  # Learning rate.
+alpha = 1e-4  # Learning rate.
 gamma = 1.0  # Discounting rate.
 
 
@@ -46,8 +46,9 @@ def batch_monte_carlo(num_episodes=100, truth_V=None, error_interval=10, error_t
         i += 1
 
         s = 3  # Start at the middle.
-        batch = [s]
+        batch = []
         while True:
+            batch.append(s)
             action = pi()
             if action == 0:  # LEFT
                 s_prime = s-1
@@ -55,7 +56,6 @@ def batch_monte_carlo(num_episodes=100, truth_V=None, error_interval=10, error_t
                 s_prime = s+1
 
             s = s_prime
-            batch.append(s)
             # Check if reaching the terminal states.
             if s == 0 or s == 6:
                 G = 1.0 if s == 6 else 0.0
