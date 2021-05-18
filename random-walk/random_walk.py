@@ -90,7 +90,7 @@ def tabular_temporal_difference(num_episodes=None, truth_V=None, error_interval=
             else:  # RIGHT
                 s_prime = s+1
 
-            reward = 0  # All rewards are 0
+            reward = 0.0  # All rewards are 0
             # TD Update
             V[s] = V[s] + alpha*(reward + gamma*V[s_prime] - V[s])
             

@@ -19,8 +19,9 @@ np.random.seed(1)  # Deterministic seed.
 
 
 ''' PARAMS '''
-alpha = 1e-4  # Learning rate.
+alpha = 1e-6 # Learning rate.
 gamma = 1.0  # Discounting rate.
+error_threshold = 1e-3  # Used for checking convergence.
 
 
 def pi():  # 0 is LEFT, 1 is RIGHT.
@@ -31,7 +32,7 @@ def rmse(estimated_V, truth_V):
     return np.sqrt(((estimated_V-truth_V)**2).sum()/5.0)  # Divided by 5 since we only consider [A,B,C,D,E], not accounting terminal states.
 
 
-def batch_monte_carlo(num_episodes=100, truth_V=None, error_interval=10, error_threshold=1e-3):  # Batch MC Update
+def batch_monte_carlo(num_episodes=100, truth_V=None, error_interval=10):  # Batch MC Update
     assert num_episodes > 0, 'NUM_EPISODES CANNOT BE A NON-POSITIVE NUMBER.'
 
     V = np.zeros(7, dtype=np.float64)
@@ -76,7 +77,7 @@ def batch_monte_carlo(num_episodes=100, truth_V=None, error_interval=10, error_t
     return V, rmse_mc
 
 
-def batch_tabular_temporal_difference(num_episodes=100, truth_V=None, error_interval=10, error_threshold=1e-3):  # Batch TD(0) Update
+def batch_tabular_temporal_difference(num_episodes=100, truth_V=None, error_interval=10):  # Batch TD(0) Update
     assert num_episodes > 0, 'NUM_EPISODES CANNOT BE A NON-POSITIVE NUMBER.'
 
     V = np.zeros(7, dtype=np.float64)
@@ -105,7 +106,7 @@ def batch_tabular_temporal_difference(num_episodes=100, truth_V=None, error_inte
                 returns = 1.0 if s == 6 else 0.0
                 break
         
-        reward = 0  # All rewards are 0
+        reward = 0.0  # All rewards are 0
         batch_history.append(batch)
         while True:  # Keep running until the algorithm converges.
             tmp_V = V.copy()  # Deep copy
