@@ -63,7 +63,7 @@ def monte_carlo(num_episodes=None, truth_V=None, error_interval=None):  # MC Upd
                 G = 1.0
                 break
 
-        for s in history:  # Every-visit update.
+        for s in history:  # Every-visit MC update.
             V[s] = V[s] + alpha*(G - V[s])
     rmse_mc.append(rmse(V, truth_V))
     return V, rmse_mc
