@@ -15,7 +15,7 @@ import numpy as np
 from tqdm import tqdm
 
 
-#np.random.seed(1)  # Deterministic seed.
+np.random.seed(1)  # Deterministic seed.
 
 
 ''' PARAMS '''

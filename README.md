@@ -12,7 +12,10 @@ This repository contains examples for Reinforcement Learning Algorithms:
     - First-Visit vs Every-Visit Update.
     - On-policy vs Off-policy.
     - NOTES: Comparing the difference between `Gambler` vs `Blackjack` problem (Gambler has assumptions about model, but blackjack does not.). `Gambler` already has assumptions about the model, we use DP. `Blackjack` does not have any assumption about the model, we use MC.
-- Random Walk(Using Tabular TD Learning to approximate State-Values, also a comparison between MC vs TD).
+- Random Walk(Using Tabular TD Learning to approximate State-Values, also a comparison between MC vs TD):
+    - TD(0) vs MC.
+    - Batch TD(0) vs Batch MC.
+    - Batch vs Non-batch update.
 
 
 ## Resources
