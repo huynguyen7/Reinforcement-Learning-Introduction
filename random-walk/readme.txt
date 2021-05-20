@@ -1,7 +1,7 @@
     - In this example we empirically compare the prediction abilities of TD(0) and constant-alpha MC when applied to the following Markov reward process:
-     [0,   1/6, 2/6, 3/6, 4/6, 5/6, 1]  # Truth State Values
-     [0,   0,   0,   0,   0,   0,   1]  # Init State Values
-     [0,   A,   B,   C,   D,   E,   1]  # State Labels
+     [0,   1/6, 2/6, 3/6, 4/6, 5/6, 0]  # Truth State Values
+     [0,   0.5,   0.5,   0.5,   0.5,   0.5,   0]  # Init State Values
+     [_,   A,   B,   C,   D,   E,   _]  # State Labels
                      ^
                      |
                    START
