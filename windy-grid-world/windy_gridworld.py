@@ -37,9 +37,9 @@ def epsilon_greedy_policy(epsilon=0.1):
     assert epsilon >= 0 and epsilon <= 1, '0 <= epsilon <= 1'
 
     greed = np.random.uniform(low=0.0, high=1.0)
-    if greed <= epsilon:
+    if greed <= epsilon:  # Explore
         return np.random.choice(ACTIONS)
-    else:
+    else:  # Exploit
         pass
 
 
@@ -69,4 +69,5 @@ def visualize(Q=None, show=False, save=False):  # Visualize optimal Q and optima
 
 ''' MAIN '''
 if __name__ == "__main__":
-    pass
+    num_episodes = 100
+    Q = sarsa(num_episodes)
