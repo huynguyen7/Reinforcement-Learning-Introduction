@@ -5,4 +5,4 @@ Using SARSA to solve the Control Problem:
 
 
 ## Examples
-![linr](optimal_policies.png)
+![linr](example/optimal_policies.png)
