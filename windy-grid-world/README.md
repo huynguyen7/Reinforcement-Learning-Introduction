@@ -1,15 +1,15 @@
 # WINDY-GRID-WORLD
-- Using SARSA/Q-Learning to solve the Control Problem:
+- Using _SARSA_/_Q-Learning_ to solve the **Control Problem**:
     - Estimate optimal Q.
     - Estimate optimal policies based on estimated Q.
 
 
 ## Examples
-- SARSA with 200 episodes:
+- _SARSA_ with 200 episodes:
 ![linr](examples/sarsa_200_eps.png)
 
-- Q-Learning with 200 episodes:
+- _Q-Learning_ with 200 episodes:
 ![linr](examples/q_learning_200_eps.png)
 
-- Comparison between SARSA and Q-Learning with 200 episodes:
+- Comparison between _SARSA_ and _Q-Learning_ with 200 episodes:
 ![linr](examples/sarsa_vs_q_learning_200_eps.png)

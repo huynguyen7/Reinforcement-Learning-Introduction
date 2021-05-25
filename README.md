@@ -19,7 +19,7 @@ This repository contains examples for Reinforcement Learning Algorithms:
 - Windy Gridworld (Using SARSA/Q-Learning for Control Problem):
     - Estimate optimal Q.
     - Estimate optimal policies from Q.
-    - Comparison between SARSA(On-Policy TD Control Method) and Q-Learnng(Off-Policy TD Control Method).
+    - Comparison between SARSA(On-Policy TD Control Method) and Q-Learning(Off-Policy TD Control Method).
 
 
 ## Resources
