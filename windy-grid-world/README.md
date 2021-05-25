@@ -1,5 +1,5 @@
 # WINDY-GRID-WORLD
--Using SARSA/Q-Learning to solve the Control Problem:
+- Using SARSA/Q-Learning to solve the Control Problem:
     - Estimate optimal Q.
     - Estimate optimal policies based on estimated Q.
 
