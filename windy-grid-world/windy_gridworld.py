@@ -160,7 +160,7 @@ if __name__ == "__main__":
     alpha = 0.5  # Learning rate
     gamma = 1.0  # Discounting rate
     epsilon = 0.1  # Greedy rate 
-    num_episodes = 200
+    num_episodes = 1000
     Q, num_steps = sarsa(num_episodes, alpha, gamma, epsilon)
 
     # Get optimal policies through estimated optimal Q with SARSA.
