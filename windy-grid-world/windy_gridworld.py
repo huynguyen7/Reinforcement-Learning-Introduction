@@ -142,8 +142,8 @@ def visualize(optimal_pi=None, num_steps=None, show=False, save=False):  # Visua
 
     plt.subplot(2,2,4)
     plt.title(f'NUMBER OF STEPS TO REACH GOAL')
-    plt.xlabel('Num steps')
-    plt.ylabel('Episodes')
+    plt.xlabel('Episodes')
+    plt.ylabel('Num steps')
     plt.grid()
     plt.plot(num_steps)
 
@@ -160,7 +160,7 @@ if __name__ == "__main__":
     alpha = 0.5  # Learning rate
     gamma = 1.0  # Discounting rate
     epsilon = 0.1  # Greedy rate 
-    num_episodes = 1000
+    num_episodes = 170
     Q, num_steps = sarsa(num_episodes, alpha, gamma, epsilon)
 
     # Get optimal policies through estimated optimal Q with SARSA.
