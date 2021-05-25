@@ -68,7 +68,7 @@ def epsilon_greedy_policy(epsilon=0.1, s=None, Q=None):
         return greedy_policy(s, Q)
 
 
-def q_learning(num_episodes=10, alpha=0.5, gamma=1.0, epsilon=0.1):  # Q-Learning (On-Policy TD Control).
+def q_learning(num_episodes=10, alpha=0.5, gamma=1.0, epsilon=0.1):  # Q-Learning (Off-Policy TD Control).
     assert num_episodes > 0, 'NUMBER OF EPISODES CANNOT BE A NON POSITIVE NUMBER.'
 
     Q = np.zeros(shape=grid_shape+(ACTIONS.shape[0],), dtype=np.float64)
@@ -162,7 +162,7 @@ if __name__ == "__main__":
     num_episodes = 200
     Q, num_steps = q_learning(num_episodes, alpha, gamma, epsilon)
 
-    # Get optimal policies through estimated optimal Q with SARSA.
+    # Get optimal policies through estimated optimal Q with Q-Learning.
     optimal_pi = np.argmax(Q, axis=-1)
 
     visualize(optimal_pi, num_steps, num_episodes, save=True)
