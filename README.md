@@ -16,9 +16,10 @@ This repository contains examples for Reinforcement Learning Algorithms:
     - TD(0) vs MC.
     - Batch TD(0) vs Batch MC.
     - Batch vs Non-batch update.
-- Windy Gridworld (Using SARSA for Control Problem):
+- Windy Gridworld (Using SARSA/Q-Learning for Control Problem):
     - Estimate optimal Q.
     - Estimate optimal policies from Q.
+    - Comparison between SARSA(On-Policy TD Control Method) and Q-Learnng(Off-Policy TD Control Method).
 
 
 ## Resources

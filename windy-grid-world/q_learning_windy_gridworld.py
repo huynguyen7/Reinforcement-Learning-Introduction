@@ -7,7 +7,7 @@
     *Windy Gridworld (Example 6.5 in the book).
     *Undiscounted finite problem.
     *Discrete action space.
-    *Using SARSA (On-Policy TD Control) to estimate Optimal Q.
+    *Using Q-Learning (Off-Policy TD Control) to estimate Optimal Q.
 
 """
 
@@ -68,7 +68,7 @@ def epsilon_greedy_policy(epsilon=0.1, s=None, Q=None):
         return greedy_policy(s, Q)
 
 
-def sarsa(num_episodes=10, alpha=0.5, gamma=1.0, epsilon=0.1):  # SARSA Learning (On-Policy TD Control).
+def q_learning(num_episodes=10, alpha=0.5, gamma=1.0, epsilon=0.1):  # Q-Learning (On-Policy TD Control).
     assert num_episodes > 0, 'NUMBER OF EPISODES CANNOT BE A NON POSITIVE NUMBER.'
 
     Q = np.zeros(shape=grid_shape+(ACTIONS.shape[0],), dtype=np.float64)
@@ -76,21 +76,19 @@ def sarsa(num_episodes=10, alpha=0.5, gamma=1.0, epsilon=0.1):  # SARSA Learning
 
     for episode in tqdm(range(num_episodes)):
         s = np.array([start[0], start[1]], dtype=np.int64)
-        a = epsilon_greedy_policy(epsilon, s, Q)
         step = 0
         while True:
             step += 1
             wind_level = grid[s[0], s[1]]  # Get wind level at the current state.
+            a = epsilon_greedy_policy(epsilon, s, Q)
             (s_prime, reward) = interact(s, s+ACTIONS[a], wind_level)
-            a_prime = epsilon_greedy_policy(epsilon, s_prime, Q)
-            #print(f's = {s}, a = {a}, s_prime = {s_prime}, a_prime = {a_prime}, wind_level = {wind_level}')
+            #print(f's = {s}, a = {a}, s_prime = {s_prime}, wind_level = {wind_level}')
 
-            # SARSA Update for Control problem (Estimate Q).
-            Q[s[0],s[1],a] = Q[s[0],s[1],a] + alpha*(reward + gamma*Q[s_prime[0],s_prime[1],a_prime] - Q[s[0],s[1],a])
+            # Q-Learning Update for Control problem (Estimate Q).
+            Q[s[0],s[1],a] = Q[s[0],s[1],a] + alpha*(reward + gamma*Q[s_prime[0],s_prime[1],:].max() - Q[s[0],s[1],a])
 
             # Update the current state and action.
             s = s_prime
-            a = a_prime
 
             if s[0] == goal[0] and s[1] == goal[1]:  # Reach terminal state.
                 break
@@ -104,13 +102,15 @@ def map_policy_to_arrow(optimal_pi=None):
     return np.array([list(map(lambda x: ARROWS[x], optimal_pi[i])) for i in range(grid_shape[0])])
 
 
-def visualize(optimal_pi=None, num_steps=None, show=False, save=False):  # Visualize optimal Q and optimal pathway from start to goal position.
+def visualize(optimal_pi=None, num_steps=None, num_episodes=1, show=False, save=False):  # Visualize optimal Q and optimal pathway from start to goal position.
     assert optimal_pi is not None and num_steps is not None, 'INVALID INPUT, CANNOT VISUALIZE!'
+    assert num_episodes > 0, 'NUMBER OF EPISODES CANNOT BE A NON POSITIVE NUMBER.'
 
     import matplotlib
     import matplotlib.pyplot as plt
     import seaborn as sns
-    matplotlib.rc('font', size=6)
+    plt.figure(figsize=(10, 8))
+    matplotlib.rc('font', size=8)
 
     plt.subplot(2,2,1)
     sns.heatmap(grid)
@@ -130,7 +130,6 @@ def visualize(optimal_pi=None, num_steps=None, show=False, save=False):  # Visua
         wind_level = grid[s[0], s[1]]  # Get wind level at the current grid.
         a = greedy_policy(s, Q)
         (s_prime, _) = interact(s, s+ACTIONS[a], wind_level)
-        #(s_prime, _) = step(s, a, wind_level)
 
         # Update the current state
         s = s_prime
@@ -150,7 +149,7 @@ def visualize(optimal_pi=None, num_steps=None, show=False, save=False):  # Visua
     if show:
         plt.show()
     if save:
-        plt.savefig('optimal_policies.png')
+        plt.savefig(f'examples/q_learning_{num_episodes}_eps.png')
         plt.close()
 
 
@@ -160,10 +159,10 @@ if __name__ == "__main__":
     alpha = 0.5  # Learning rate
     gamma = 1.0  # Discounting rate
     epsilon = 0.1  # Greedy rate 
-    num_episodes = 170
-    Q, num_steps = sarsa(num_episodes, alpha, gamma, epsilon)
+    num_episodes = 200
+    Q, num_steps = q_learning(num_episodes, alpha, gamma, epsilon)
 
     # Get optimal policies through estimated optimal Q with SARSA.
     optimal_pi = np.argmax(Q, axis=-1)
 
-    visualize(optimal_pi, num_steps, show=True)
+    visualize(optimal_pi, num_steps, num_episodes, save=True)
