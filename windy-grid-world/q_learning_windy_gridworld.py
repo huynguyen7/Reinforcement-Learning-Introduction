@@ -87,7 +87,7 @@ def q_learning(num_episodes=10, alpha=0.5, gamma=1.0, epsilon=0.1):  # Q-Learnin
             # Q-Learning Update for Control problem (Estimate Q).
             Q[s[0],s[1],a] = Q[s[0],s[1],a] + alpha*(reward + gamma*Q[s_prime[0],s_prime[1],:].max() - Q[s[0],s[1],a])
 
-            # Update the current state and action.
+            # Update the current state.
             s = s_prime
 
             if s[0] == goal[0] and s[1] == goal[1]:  # Reach terminal state.
