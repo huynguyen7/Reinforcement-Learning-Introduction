@@ -102,7 +102,7 @@ def map_policy_to_arrow(optimal_pi=None):
     return np.array([list(map(lambda x: ARROWS[x], optimal_pi[i])) for i in range(grid_shape[0])])
 
 
-def visualize(optimal_pi=None, num_steps=None, num_episodes=1, show=False, save=False):  # Visualize optimal Q and optimal pathway from start to goal position.
+def visualize(optimal_pi=None, num_steps=None, num_episodes=1, show=False, save=False, max_steps=100):  # Visualize optimal Q and optimal pathway from start to goal position.
     assert optimal_pi is not None and num_steps is not None, 'INVALID INPUT, CANNOT VISUALIZE!'
     assert num_episodes > 0, 'NUMBER OF EPISODES CANNOT BE A NON POSITIVE NUMBER.'
 
@@ -125,7 +125,7 @@ def visualize(optimal_pi=None, num_steps=None, num_episodes=1, show=False, save=
     plt.title(f'OPTIMAL PATH FROM {start} TO {goal}')
     optimal_path = np.zeros(grid_shape, dtype=np.int64)
     s = np.array([start[0],start[1]])
-    while True:
+    for i in range(max_steps):
         optimal_path[s[0],s[1]] = 1
         wind_level = grid[s[0], s[1]]  # Get wind level at the current grid.
         a = greedy_policy(s, Q)
@@ -165,4 +165,4 @@ if __name__ == "__main__":
     # Get optimal policies through estimated optimal Q with Q-Learning.
     optimal_pi = np.argmax(Q, axis=-1)
 
-    visualize(optimal_pi, num_steps, num_episodes, save=True)
+    visualize(optimal_pi, num_steps, num_episodes, save=True, max_steps=100)
