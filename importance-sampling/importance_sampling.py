@@ -16,7 +16,7 @@
 
 
 import numpy as np
-from scipy.stats import norm, expon
+from scipy.stats import norm
 
 
 np.random.seed(1)  # Deterministic seed, just for testing purpose!
