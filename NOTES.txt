@@ -72,3 +72,10 @@ https://en.wikipedia.org/wiki/Model-free_(reinforcement_learning)
 
 * On-policy vs Off-policy:
 https://leimao.github.io/blog/RL-On-Policy-VS-Off-Policy/
+
+* Distribution models vs Sample models:
+Book on page 159 (Chapter 8 -> Section 8.1)
+https://www.cs.cmu.edu/~katef/DeepRLFall2018/lecture_planninglearningMCTS.pdf
+
+* Heuristic:
+https://en.wikipedia.org/wiki/Heuristic_(computer_science)

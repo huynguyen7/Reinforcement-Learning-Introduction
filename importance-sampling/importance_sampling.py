@@ -36,7 +36,7 @@ def f(x=None):  # Return pdf of standard norm (Target distribution)
 
 
 # Choose normal distribution (u=1.0, std=3.0) for importance sampling for this example..
-def g(x=None):  # Return Return pdf of importance sampling (different from Target distribution)
+def g(x=None):  # Return pdf of importance sampling (different from Target distribution)
     assert x is not None
     return norm.pdf(x, loc=1.0,scale=3.0)
 
@@ -62,7 +62,7 @@ def importance_sampling(n=1000):  # Return estimate for P(X>3) with equation (1.
 """ MAIN """
 if __name__ == "__main__":
     ''' PARAMS '''
-    n = 50000  # Number samples
+    n = 40000  # Number samples
     
     truth_P = 1-norm.cdf(X)  # Using scipy library to get the truth value P(X>3).
     monte_carlo_P = monte_carlo(n)  # Using monte carlo method to estimate P(X>3)
