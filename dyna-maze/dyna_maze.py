@@ -72,7 +72,7 @@ def dyna_q(num_episodes=100, alpha=0.1, gamma=0.95, epsilon=0.1, n=5):  # Return
             a = epsilon_greedy_policy(epsilon, s, Q)  # Get action
             reward, s_prime = interact(s, ACTIONS[a])  # Take action (real experience)
 
-            # one-step tabular Q-learning Update (Direct RL).
+            # one-step tabular Q-learning Update (Direct RL update, using real experience).
             Q[s[0],s[1],a] = Q[s[0],s[1],a] + alpha*(reward + gamma*Q[s_prime[0],s_prime[1],:].max() - Q[s[0],s[1],a])
 
             # Model-learning.
@@ -88,7 +88,7 @@ def dyna_q(num_episodes=100, alpha=0.1, gamma=0.95, epsilon=0.1, n=5):  # Return
                 a_ = random.choice(list(model[s_].keys()))
                 (reward_,s_prime_) = model[s_][a_]  # Returns the last-observed next reward and next state (simulated experience).
 
-                # N-step Q-learning Update (Direct RL).
+                # Planning update (using simulated experience).
                 Q[s_[0],s_[1],a_] = Q[s_[0],s_[1],a_] + alpha*(reward_ + gamma*Q[s_prime_[0],s_prime_[1],:].max() - Q[s_[0],s_[1],a_])
 
             s = s_prime  # Move to next state
