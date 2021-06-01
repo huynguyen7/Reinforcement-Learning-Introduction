@@ -13,13 +13,14 @@ This repository contains examples for Reinforcement Learning Algorithms:
     - On-policy vs Off-policy.
     - NOTES: Comparing the difference between `Gambler` vs `Blackjack` problem (Gambler has assumptions about model, but blackjack does not.). `Gambler` already has assumptions about the model, we use DP. `Blackjack` does not have any assumption about the model, we use MC.
 - Random Walk(Using Tabular TD Learning TD(0) to approximate State-Values, also a comparison between MC vs TD):
-    - TD(0) vs MC.
+    - TD(0) (aka one-step TD) vs MC.
     - Batch TD(0) vs Batch MC.
     - Batch vs Non-batch update.
 - Windy Gridworld (Using SARSA/Q-Learning for Control Problem, one-step TD Update):
     - Estimate optimal Q.
     - Estimate optimal policies from Q.
     - Comparison between SARSA(On-Policy TD Control Method) and Q-Learning(Off-Policy TD Control Method).
+- Dyna Maze (Example 8.1, Using Tabular n-step Dyna-Q for Control Problem).
 
 
 ## Resources
