@@ -28,4 +28,4 @@
 
 ## Comparisons:
 - Comparing n=0, n=5, n=50:
-![linr](examples/.png)
+![linr](examples/comparisons.png)
