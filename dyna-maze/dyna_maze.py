@@ -78,7 +78,6 @@ def dyna_q(num_episodes=100, alpha=0.1, gamma=0.95, epsilon=0.1, n=5):  # Return
             # Model-learning.
             if model.get(s) is None:
                 model[s] = dict()
-                
             model[s][a] = (reward, s_prime)
 
             # n-step tabular Q-learning.
