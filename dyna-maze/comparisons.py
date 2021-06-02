@@ -25,5 +25,6 @@ if __name__ == "__main__":
         _, num_steps = dyna_q(num_episodes, alpha, gamma, epsilon, test_n)
         plt.plot(num_steps, label=f'n={test_n}')
     plt.grid()
+    plt.legend()
     plt.savefig('examples/comparisons.png')
     plt.close()
