@@ -23,5 +23,8 @@ This repository contains examples for Reinforcement Learning Algorithms:
 - Dyna Maze (Example 8.1, Using Tabular n-step Dyna-Q for Control Problem).
 
 
+## Notes
+I cares about _readability_ and _similarity_ to the book that I used.
+
 ## Resources
 - Reinforcement Learning: An Introduction 2nd Edition: [Click Here](https://web.stanford.edu/class/psych209/Readings/SuttonBartoIPRLBook2ndEd.pdf)
