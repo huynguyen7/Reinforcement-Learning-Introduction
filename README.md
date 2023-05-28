@@ -1,4 +1,7 @@
 # REINFORCEMENT-LEARNING ALGORITHMS
+Everything from scratch.. This repo aims for understanding in ML Maths.
+Only utilizing Numpy for calculations.
+
 This repository contains examples for Reinforcement Learning Algorithms:
 - Single-state K-bandits (Basic Monte Carlo with sampling average):
     - Epsilon Greedy vs UCB.
